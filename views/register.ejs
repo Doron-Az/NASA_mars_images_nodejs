@@ -1,0 +1,98 @@
+<%- include('includes/head.ejs') %>
+    <h2>
+        <%= error_msg %>
+    </h2>
+
+    <form id="passwordForm" action="register/add-user/success" method="post">
+        <div class="row" id="registerForm">
+            <div class="col-4"></div>
+            <div class="col-4">
+                <div class="card">
+                    <img src="https://wallup.net/wp-content/uploads/2019/09/817487-martian-sci-fi-futuristic-astronaut-mars-1martian-adventure-drama-damon.jpg"
+                        class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="m-2"><b>Sign Up</b></h5>
+                        <div class="form-group m-2">
+                            <label for="emailInput" class="form-label">Email address</label>
+                            <input type="email" class="form-control " id="emailInput" name="emailInput"
+                                aria-describedby="emailHelp" placeholder="Enter email" required>
+                            <div class="text-danger errormessage"></div>
+
+                        </div>
+                        <div class="form-group m-2">
+                            <label for="firstNameInput" class="form-label">First name</label>
+                            <input type="text" class="form-control" id="firstNameInput" name="firstNameInput"
+                                placeholder="First name">
+                            <div class="text-danger errormessage"></div>
+
+                        </div>
+                        <div class="form-group m-2">
+                            <label for="lastNameInput" class="form-label">Last name</label>
+                            <input type="text" class="form-control" id="lastNameInput" name="lastNameInput"
+                                placeholder="Last name">
+                            <div class="text-danger errormessage"></div>
+
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end m-3">
+                            <a href="http://localhost:3000/" class="button btn btn-secondary">Back</a>
+                            <button type="button" id="registerFirstPart" class="btn btn-primary">Continue</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4"></div>
+        </div>
+
+        <div class="row m-3 d-none" id="passwordDiv">
+            <div class="col-4"></div>
+            <div class="col-4">
+                <div class="card">
+                    <img src="https://wallup.net/wp-content/uploads/2019/09/817487-martian-sci-fi-futuristic-astronaut-mars-1martian-adventure-drama-damon.jpg"
+                        class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5><b>Please enter password</b></h5>
+                        <div class="form-group m-2">
+                            <label for="passwordInput">Password</label>
+                            <input type="password" class="form-control" name="passwordInput" id="passwordInput"
+                                placeholder="Password">
+                            <div class="text-danger errormessage"></div>
+
+                        </div>
+                        <div class="form-group m-2">
+                            <label for="comfirmPasswordInput">Confirm Password</label>
+                            <input type="password" class="form-control" name="confirmPasswordInput"
+                                id="confirmPasswordInput" placeholder="Password">
+                            <div class="text-danger errormessage"></div>
+
+                        </div>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end m-3">
+                            <button type="submit" class="btn btn-primary">Finish</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4"></div>
+        </div>
+        <div class="row">
+            <div class="col-4"></div>
+            <div class="d-none col-4 text-center" id="toSlow">
+                <div class="card" style="width: 18rem;">
+                    <img class="card-img-top"
+                        src="https://i.pinimg.com/originals/8a/c1/30/8ac130de823cd1d27e6885da8375b307.gif"
+                        alt="https://i.pinimg.com/originals/6f/77/ca/6f77ca4a562f59f731dc38a1460c6422.gif">
+                    <div class="card-body">
+                        <h5 class="card-title">Oops too slow ...</h5>
+                        <p class="card-text">Try again and this time hurry up.</p>
+                        <a href="http://localhost:3000/" class="btn btn-primary">Home page</a>
+                        <a href="http://localhost:3000/register" class="btn btn-primary">Sing up</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4"></div>
+
+        </div>
+
+    </form>
+
+    <%- include('includes/end.ejs') %>

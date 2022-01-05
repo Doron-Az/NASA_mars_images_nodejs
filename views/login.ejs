@@ -1,0 +1,47 @@
+<%- include('includes/head.ejs') %>
+
+    <div class="row m-3">
+        <div class="col-4"></div>
+        <div class="col-4">
+
+            <div class="card">
+                <img src="https://wallup.net/wp-content/uploads/2019/09/817487-martian-sci-fi-futuristic-astronaut-mars-1martian-adventure-drama-damon.jpg"
+                    class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5><b>Please Login or sign up</b></h5>
+                    <form id="loginForm" action="/login" method="post">
+                        <div class="form-group">
+                            <label for="emailInput">Email address</label>
+                            <input type="email" class="form-control" id="emailInput" name="emailInput"
+                                aria-describedby="emailHelp" placeholder="Enter email" required>
+                            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone
+                                else.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Password</label>
+                            <input type="password" class="form-control" id="exampleInputPassword1"
+                                placeholder="Password" required>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="submit" class="btn btn-primary m-2">Login</button>
+                        </div>
+
+                    </form>
+
+                    <form id="signUpForm" method="post" action="/register">
+                        <p class="text-center">Don't have an account?
+                            <button type="submit" formaction="/register" class="text-primary btn btn-outline-light">Sign
+                                Up
+                            </button>
+                        </p>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-4"></div>
+    </div>
+    </div>
+
+    <%- include('includes/end.ejs') %>
