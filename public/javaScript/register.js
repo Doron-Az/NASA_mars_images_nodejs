@@ -1,38 +1,36 @@
-
-
-const validatorModule = (function () {
-    const isNotEmpty = function (str) {
+const validatorModule = (function() {
+    const isNotEmpty = function(str) {
         return {
             isValid: (str.length !== 0),
             message: 'Please fill out this field'
         };
     }
 
-    const hasLetter = function (str) {
+    const hasLetter = function(str) {
         return {
             isValid: (/^[a-zA-Z]+$/.test(str)),
             message: 'Please enter only alphabetic letters'
         }
     }
-    const isEmail = function (str) {
+    const isEmail = function(str) {
         return {
             isValid: (/\S+@\S+\.\S+/.test(str)),
             message: 'Please enter the correct Email format'
         }
     }
-    const isBiggerThan = function (str) {
+    const isBiggerThan = function(str) {
         return {
             isValid: (str.length > 7),
             message: "Please enter at least 8 characters"
         }
     }
-    const isEqual = function (strA, strB) {
+    const isEqual = function(strA, strB) {
         return {
             isValid: (strA === strB),
             message: "The password confirmation does not match"
         }
     }
-    const isExist = function (email) {
+    const isExist = function(email) {
         return {
             isValid: false,
             message: "a user with this email adress already exists"
@@ -48,7 +46,7 @@ const validatorModule = (function () {
     }
 })();
 
-(function () {
+(function() {
 
 
     function setCookie(cname, cvalue) {
@@ -111,7 +109,7 @@ const validatorModule = (function () {
         let errorElement;
 
         if (inputElement.length === 1) {
-            v = validateFunc(inputElement[0].value);// call the validation function
+            v = validateFunc(inputElement[0].value); // call the validation function
             errorElement = inputElement[0].nextElementSibling; // the error message div
         } else {
             v = validateFunc(inputElement[0].value, inputElement[1].value); // call the validation function
@@ -160,7 +158,7 @@ const validatorModule = (function () {
         return v1 && v2;
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
 
         let emailInputElem = document.getElementById("emailInput");
         let firstNameInputElem = document.getElementById("firstNameInput");
@@ -174,18 +172,18 @@ const validatorModule = (function () {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ "email": emailInputElem.value.trim() })
-            }).then(function (response) {
+            }).then(function(response) {
                 return response.json();
-            }).then(function (data) {
+            }).then(function(data) {
 
                 if (validateFirstRegisterInput(firstNameInputElem, lastNameInputElem, emailInputElem, data)) {
 
-                    setCookie(emailInputElem.value, "registerTimer");
+                    setCookie("registerTimer", "");
                     document.getElementById("registerForm").classList.add('d-none');
                     document.getElementById("passwordDiv").classList.remove('d-none');
                 }
 
-            }).catch(function (error) {
+            }).catch(function(error) {
                 viewErrorModal(error);
                 console.log(error);
             });
@@ -195,42 +193,11 @@ const validatorModule = (function () {
 
             event.preventDefault();
 
-            const v1 = validationPasswordsInput(passwordInputElem, confirmPasswordInputElem);
-            const v2 = getCookie(emailInputElem.value);
-
-            if (!v2) {
-                document.getElementById("toSlow").classList.remove("d-none");
-                document.getElementById("passwordDiv").classList.add('d-none');
+            if (validationPasswordsInput(passwordInputElem, confirmPasswordInputElem)) {
+                delete_cookie("registerTimer");
+                document.getElementById("passwordForm").submit();
             }
-            else if (v1) {
-                fetch('/register/add-user', {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        "first_name": lastNameInputElem.value,
-                        "last_name": firstNameInputElem.value,
-                        "email": emailInputElem.value,
-                        "password": passwordInputElem.value
-                    })
-                }).then(function (response) {
-                    return response.json();
-                }).then(function (data) {
-                    console.log("Data: ", data);
-                    if (data) {
-                        //we sing up successfully and continue to success:
-                        delete_cookie(emailInputElem.value);
-                        document.getElementById("passwordForm").submit();
-                    } else {
-                        //something go Wrong on submit so we print error:
-                        viewErrorModal(error);
-                        console.log(error);
-                    }
 
-                }).catch(function (error) {
-                    viewErrorModal(error);
-                    console.log(error);
-                });
-            }
         });
     });
 })();

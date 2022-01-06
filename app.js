@@ -2,8 +2,12 @@ var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
-var Coockies = require('cookies');
 var logger = require('morgan');
+var http = require('http')
+var Cookies = require('cookies')
+var session = require('express-session');
+
+
 
 var loginRouter = require('./routes/login');
 var registerRouter = require('./routes/register');
@@ -12,6 +16,11 @@ var homeRouter = require('./routes/home')
 
 var app = express();
 
+app.use(session({
+  secret: 'secret-key',
+  resave: false,
+  saveUninitialized: false
+}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

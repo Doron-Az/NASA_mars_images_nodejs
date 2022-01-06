@@ -1,17 +1,10 @@
+'use strict';
 var express = require('express');
 var router = express.Router();
+const loginController = require('../Controllers/login');
 
-/* GET home page. */
-router.get('/', function (req, res) {
-    res.render('login', {pageTitle: "NASA Login", scriptPath: ""});
-});
+router.get('/', loginController.getLogin);
 
-router.post('/', function (req, res) {
-    res.render('login', {});
-});
-
-
+router.post('/', loginController.postLogin);
 
 module.exports = router;
-
-

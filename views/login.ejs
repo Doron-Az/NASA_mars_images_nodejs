@@ -1,26 +1,29 @@
 <%- include('includes/head.ejs') %>
 
-    <div class="row m-3">
-        <div class="col-4"></div>
-        <div class="col-4">
+
+
+    <input type="hidden" id="errorMsgEmail" name="errorMsgEmail" value="<%=error_msg_email%>">
+    <input type="hidden" id="errorMsgPassword" name="errorMsgPassword" value="<%=error_msg_password %>">
+    <input type="hidden" id="emailHidden" name="emailHidden" value="<%=email_hidden%>">
+
+    <div class="row m-3" id="test">
+        <div class="col-md-3 col-lg-4"></div>
+        <div class="col-12 col-md-6 col-lg-4">
 
             <div class="card">
-                <img src="https://wallup.net/wp-content/uploads/2019/09/817487-martian-sci-fi-futuristic-astronaut-mars-1martian-adventure-drama-damon.jpg"
-                    class="card-img-top" alt="...">
+                <img src="https://wallup.net/wp-content/uploads/2019/09/817487-martian-sci-fi-futuristic-astronaut-mars-1martian-adventure-drama-damon.jpg" class="card-img-top" alt="...">
                 <div class="card-body">
                     <h5><b>Please Login or sign up</b></h5>
                     <form id="loginForm" action="/login" method="post">
                         <div class="form-group">
                             <label for="emailInput">Email address</label>
-                            <input type="email" class="form-control" id="emailInput" name="emailInput"
-                                aria-describedby="emailHelp" placeholder="Enter email" required>
-                            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone
-                                else.</small>
+                            <input type="email" class="form-control" id="emailInput" name="emailInput" aria-describedby="emailHelp" placeholder="Enter email" required>
+                            <div class="text-danger errormessage"></div>
                         </div>
                         <div class="form-group">
-                            <label for="exampleInputPassword1">Password</label>
-                            <input type="password" class="form-control" id="exampleInputPassword1"
-                                placeholder="Password" required>
+                            <label for="passwordInput">Password</label>
+                            <input type="password" class="form-control" id="passwordInput" name="passwordInput" placeholder="Password" required>
+                            <div class="text-danger errormessage"></div>
                         </div>
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
@@ -40,7 +43,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-4"></div>
+        <div class="col-md-3 col-lg-4"></div>
     </div>
     </div>
 

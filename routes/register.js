@@ -6,28 +6,22 @@ var router = express.Router();
 const keys = ['keyboard cat']
 
 
-router.get('/', function (req, res) {
-    res.render('register', {pageTitle: "NASA Sign Up", scriptPath: "javaScript/register.js", error_msg: ""});
+router.get('/', function(req, res) {
+    if (req.session.isConnected)
+        res.redirect('/');
+
+    res.render('register', { pageTitle: "NASA Sign Up", scriptPath: "javaScript/register.js", error_msg: "" });
 });
 
-router.post('/', function (req, res) {
+router.post('/', function(req, res) {
     res.redirect('register');
 });
 
-router.put('/add-user', registerController.addUserToDataBase);
 
-router.post('/add-user/success', function (req, res) {
-    res.render('success', {
-        pageTitle: "NASA Success",
-        scriptPath: "",
-        error_msg: "",
-        user_name: req.body.firstNameInput + " " + req.body.lastNameInput
-    });
-});
+router.post('/result', registerController.addUserToDataBase);
 
-router.get('/add-user/success', function (req, res) {
-    res.redirect('/login')
+router.get('/result', function(req, res) {
+    res.redirect('/');
 });
 
 module.exports = router;
-
