@@ -1,7 +1,7 @@
 <%- include('includes/head.ejs') %>
 
     <div class="container-fluid">
-        <div id="loadingBuffering" class="d-none"></div>
+        <div id="loadingBuffering" class=""></div>
 
         <div class="row">
             <div style="background: url(https://www.science.org.au/curious/sites/default/files/article-banner-image/2-mars-banner.jpg)" class="jumbotron bg-cover text-white">
@@ -23,7 +23,7 @@
             <div class="col-12 col-md-6 ">
                 <form id="form-nasa-api">
                     <div class="m-2">
-                        <h4 class="alert alert-dark fw-bold"><b>Search for images:</b></h4>
+                        <h4 class="alert alert-dark fw-bold"><b>Search for images</b></h4>
                         <label for="dateInput">Date (YYYY-MM-DD) or Sol:</label>
                         <input type="text" class="form-control" id="dateInput" placeholder="YYYY-MM-DD or Sol">
                         <div class="text-danger errormessage"></div>
@@ -44,8 +44,8 @@
                         </select>
                         <div class="text-danger errormessage"></div>
                         <div class="mt-2">
-                            <button type="submit" class="btn btn-secondary" id="searchBtn"> Search</button>
-                            <button type="button" class="btn btn-danger" id="clearBtn"> Clear</button>
+                            <button type="submit" class="btn btn-outline-secondary" id="searchBtn"> Search</button>
+                            <button type="button" class="btn btn-outline-danger" id="clearBtn"> Clear</button>
                         </div>
                     </div>
                 </form>
@@ -53,12 +53,10 @@
 
             <div class="col-12 col-md-6">
                 <div class="m-2">
-                    <h4 class="alert alert-dark fw-bold"> <b>Saved images:</b></h4>
-                    <button type="button" class="btn btn-secondary" id="slideShowBtn"> Start slide show</button>
-                    <button type="button" class="btn btn-danger" id="stopSlideShowBtn"> Stop slide show</button>
+                    <h4 class="alert alert-dark fw-bold"> <b>Saved images</b></h4>
+                    <button type="button" class="btn btn-outline-secondary" id="slideShowBtn">Start slide show</button>
                     <button type="button" class="btn btn-outline-secondary" id="editBtn">Edit Mode</button>
-                    <button type="button" class="btn btn-dark togglevisible d-none" id="clearAllBtn">Clear all</button>
-
+                    <button type="button" class="btn btn btn-outline-danger togglevisible d-none" style="float: right;" id="clearAllBtn">Clear all</button>
 
                     <ol id="savedList">
                     </ol>
@@ -86,7 +84,7 @@
         </div>
 
         <div class="row m-2">
-            <h4 class=" alert alert-dark fw-bold"><b>Search result:</b></h4>
+            <h4 class=" alert alert-dark fw-bold"><b>Search result</b></h4>
             <h4 class="p-3 mb-2 bg-danger text-white d-none" id="noImagesFound"><b>No images found!</b></h4>
             <div class="row" id="photosGallery">
             </div>
@@ -120,7 +118,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Oops..</h5>
+                    <h5 class="modal-title">Oops!</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -138,14 +136,13 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Warning</h5>
+                    <h4 class="modal-title text-danger">Warning</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <p id="errorModalText">You're about to delete all the photos you saved, are you sure you want to continue?</p>
                 </div>
                 <div class="modal-footer">
-
                     <button type="button" class="btn btn-sm btn-outline-danger" data-bs-dismiss="modal">No</button>
                     <button type="button" class="btn btn-sm btn-outline-success" data-bs-dismiss="modal" id="confirmDeleteSavedList">Yes</button>
                 </div>

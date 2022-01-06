@@ -13,11 +13,14 @@ exports.isValidEmail = (req, res) => {
         })
 }
 
-exports.addImage = (req, res) => {
+exports.addImage = async(req, res) => {
 
     const { image } = req.body;
 
-    dbModels.MarsImage.create({
+    const isExist = await dbModels.MarsImage.findOne({ where: { email: req.session.isConnected, imageId: image.id } });
+
+    if (!isExist)
+        dbModels.MarsImage.create({
             url: image.source,
             email: req.session.isConnected,
             imageId: image.id,
@@ -32,6 +35,9 @@ exports.addImage = (req, res) => {
         .catch((err) => {
             return res.status(400).send(err)
         })
+    else
+        res.send(false);
+
 }
 
 

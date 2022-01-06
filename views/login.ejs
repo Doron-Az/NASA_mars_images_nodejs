@@ -1,7 +1,7 @@
 <%- include('includes/head.ejs') %>
 
 
-
+    <div id="loadingBuffering" class="d-none"></div>
     <input type="hidden" id="errorMsgEmail" name="errorMsgEmail" value="<%=error_msg_email%>">
     <input type="hidden" id="errorMsgPassword" name="errorMsgPassword" value="<%=error_msg_password %>">
     <input type="hidden" id="emailHidden" name="emailHidden" value="<%=email_hidden%>">
@@ -11,7 +11,7 @@
         <div class="col-12 col-md-6 col-lg-4">
 
             <div class="card">
-                <img src="https://wallup.net/wp-content/uploads/2019/09/817487-martian-sci-fi-futuristic-astronaut-mars-1martian-adventure-drama-damon.jpg" class="card-img-top" alt="...">
+                <img src="../images/nasa-logo.gif" class="card-img-top" alt="...">
                 <div class="card-body">
                     <h5><b>Please Login or sign up</b></h5>
                     <form id="loginForm" action="/login" method="post">
@@ -27,7 +27,7 @@
                         </div>
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <button type="submit" class="btn btn-primary m-2">Login</button>
+                            <button type="submit" class="btn btn-outline-primary m-2">Login</button>
                         </div>
 
                     </form>

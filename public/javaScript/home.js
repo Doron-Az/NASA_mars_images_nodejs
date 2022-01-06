@@ -152,8 +152,8 @@ let makerHTML = (() => {
                                     <p id="imageMission">Mission: ${mission} </p>
                                     <p id="imageCamera">Camera: ${camera}</p>
                             <div class="text-center">                         
-                                <button type="button" class="btn btn-primary saveBtn"  style="width: 7rem; ">Save</button> 
-                                <a type="button" href=${sourceImage} target="_blank" class="btn btn-primary fullSizeBtn"  style="width: 7rem; ">Full Size</a>                  
+                                <button type="button" class="btn btn-outline-secondary saveBtn"  style="width: 7rem; ">Save</button> 
+                                <a type="button" href=${sourceImage} target="_blank" class="btn btn-outline-secondary fullSizeBtn"  style="width: 7rem; ">Full Size</a>                  
                             </div>
                         </div>
                     </div>
@@ -234,6 +234,7 @@ let makerHTML = (() => {
     let carouselElem = null;
     let noImagesFoundElem = null;
     let loadingBuffer = null;
+    let isEmpyCarousel = "active";
 
     //const str of errors during program.
     const MSG_FAILED_LOAD_DATA = '"We were unable to load the information, please refresh the page and try again."';
@@ -359,36 +360,39 @@ let makerHTML = (() => {
      * Puts the image into an HTML page in a carousel of images, thus allowing the user to open a carousel of his saved list.
      */
     function addToSaveList() {
+
         let savedButtons = document.getElementsByClassName('saveBtn');
         let myIndex = Array.from(savedButtons).indexOf(this);
 
         //add fetch not exist image saved
-        if (!imagesSavedIdList.find(numId => numId === imagesList[myIndex].id)) {
 
-            fetch("/api/resources/add-image", {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ "image": imagesList[myIndex] })
-            }).then(function(response) {
-                return response.json();
-            }).then(function(data) {
+        loadingBuffer.classList.remove("d-none");
+        fetch("/api/resources/add-image", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ "image": imagesList[myIndex] })
+        }).then(function(response) {
+            return response.json();
+        }).then(function(data) {
 
-                if (data)
-                    getListOfSavedImages();
+            if (data)
+                getListOfSavedImages();
+            else
+                viewErrorModal(MSG_IMAGE_EXIST);
 
-            }).catch(function(error) {
-                viewErrorModal(error);
-                console.log(error);
-            });
+            loadingBuffer.classList.add("d-none");
 
-
-        } else
-            viewErrorModal(MSG_IMAGE_EXIST);
+        }).catch(function(error) {
+            loadingBuffer.classList.add("d-none");
+            viewErrorModal(error);
+            console.log(error);
+        });
     }
 
     function deleteFromSaveList() {
 
         const imageId = this.parentElement.getAttribute('class');
+        loadingBuffer.classList.remove("d-none");
 
         fetch("/api/resources/delete-image", {
             method: "DELETE",
@@ -401,7 +405,10 @@ let makerHTML = (() => {
             if (data)
                 getListOfSavedImages();
 
+            loadingBuffer.classList.add("d-none");
+
         }).catch(function(error) {
+            loadingBuffer.classList.add("d-none");
             viewErrorModal(error);
             console.log(error);
         });
@@ -577,6 +584,8 @@ let makerHTML = (() => {
 
     function getListOfSavedImages() {
 
+        loadingBuffer.classList.remove("d-none");
+
         fetch("/api/resources/saved-image-list", {
             method: "GET",
             headers: { "Content-Type": "application/json" },
@@ -585,9 +594,13 @@ let makerHTML = (() => {
         }).then(function(data) {
 
             setListOfSavedImages(data);
+
+            loadingBuffer.classList.add("d-none");
+
             return data;
 
         }).catch(function(error) {
+            loadingBuffer.classList.add("d-none");
             viewErrorModal(error);
             console.log(error);
         });
@@ -596,12 +609,14 @@ let makerHTML = (() => {
     function setListOfSavedImages(savedList) {
 
         savedImagesListElem.innerHTML = "";
-        let active = "active";
+        document.getElementById("myCarousel").innerHTML = "";
+
+        isEmpyCarousel = "active";
 
         savedList.forEach((image) => {
             savedImagesListElem.innerHTML += makerHTML.makeToSavedListImageHTML(image);
-            document.getElementById("myCarousel").innerHTML += makerHTML.makeImageCarouselHTML(image, active);
-            active = "";
+            document.getElementById("myCarousel").innerHTML += makerHTML.makeImageCarouselHTML(image, isEmpyCarousel);
+            isEmpyCarousel = "";
         })
 
         //add listeners to save buttons
@@ -620,13 +635,11 @@ let makerHTML = (() => {
 
             });
         }
-
     }
-
-
 
     function deleteSavedListImages() {
 
+        loadingBuffer.classList.remove("d-none");
 
         fetch("/api/resources/delete-all-image-list", {
             method: "DELETE",
@@ -635,15 +648,62 @@ let makerHTML = (() => {
             return response.json();
         }).then(() => {
 
+            editSavedList();
             setListOfSavedImages([]);
 
+            loadingBuffer.classList.add("d-none");
+
+
         }).catch(function(error) {
+            loadingBuffer.classList.add("d-none");
             viewErrorModal(error);
             console.log(error);
         });
 
     }
 
+    function CustomizeButton(e, strA, strB) {
+
+        if (isEmpyCarousel !== "active") {
+            if (e.innerHTML === strA) {
+                e.innerHTML = strB;
+            } else
+                e.innerHTML = strA;
+
+
+            e.classList.toggle('btn-secondary');
+            e.classList.toggle('btn-outline-secondary');
+            return true;
+        } else {
+            viewErrorModal("Saved list is emppty")
+            return false;
+        }
+
+    }
+
+    function slideShowCarousel() {
+
+        if (!document.getElementById("clearAllBtn").classList.contains('d-none'))
+            editSavedList();
+
+        if (CustomizeButton(document.getElementById("slideShowBtn"), "Start slide show", "Stop slide show")) {
+            carouselElem.classList.toggle("d-none");
+        }
+    }
+
+    function editSavedList() {
+
+        if (!document.getElementById("imagesCarousel").classList.contains('d-none'))
+            slideShowCarousel();
+
+
+        if (CustomizeButton(document.getElementById("editBtn"), "Edit Mode", "Stop Edit Mode")) {
+            let list = document.getElementsByClassName("togglevisible");
+
+            for (let i of list)
+                i.classList.toggle("d-none");
+        }
+    }
 
     document.addEventListener('DOMContentLoaded', function() {
 
@@ -652,30 +712,12 @@ let makerHTML = (() => {
         getListOfSavedImages();
 
         document.getElementById("form-nasa-api").addEventListener("submit", searchImages);
-        document.getElementById("slideShowBtn").addEventListener("click", () => {
-            (imagesSavedIdList.length > 0) ? carouselElem.classList.remove("d-none"):
-                viewErrorModal("No saved photos..");
-        });
-        document.getElementById("stopSlideShowBtn").addEventListener("click", () => {
-            carouselElem.classList.add("d-none");
-        });
         document.getElementById("clearBtn").addEventListener("click", clearDataPage);
-
-        document.getElementById("editBtn").addEventListener("click", (e) => {
-
-            let list = document.getElementsByClassName("togglevisible");
-
-            e.target.innerHTML = e.target.innerHTML === "Edit Mode" ? "Stop Edit Mode" : "Edit Mode";
-
-            for (let i of list)
-                i.classList.toggle("d-none");
-        });
+        document.getElementById("editBtn").addEventListener("click", editSavedList);
+        document.getElementById("slideShowBtn").addEventListener("click", slideShowCarousel);
 
 
         document.getElementById("confirmDeleteSavedList").addEventListener("click", deleteSavedListImages);
         document.getElementById("clearAllBtn").addEventListener("click", deleteAllSavedImageListModal);
-
-
-
     });
 })();

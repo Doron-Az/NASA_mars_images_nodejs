@@ -167,7 +167,7 @@ const validatorModule = (function() {
         let confirmPasswordInputElem = document.getElementById("confirmPasswordInput");
 
         document.getElementById("registerFirstPart").addEventListener("click", (event) => {
-
+            document.querySelector("#loadingBuffering").classList.remove('d-none');
             fetch("/api/resources/isValidEmail", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -182,8 +182,10 @@ const validatorModule = (function() {
                     document.getElementById("registerForm").classList.add('d-none');
                     document.getElementById("passwordDiv").classList.remove('d-none');
                 }
+                document.querySelector("#loadingBuffering").classList.add('d-none');
 
             }).catch(function(error) {
+                document.querySelector("#loadingBuffering").classList.add('d-none');
                 viewErrorModal(error);
                 console.log(error);
             });
