@@ -10,6 +10,7 @@ router.put('/resources/add-image', apiController.addImage);
 router.get('/resources/saved-image-list', apiController.geSavedImageList);
 
 router.delete('/resources/delete-image', apiController.deleteImage);
+router.delete('/resources/delete-all-image-list', apiController.deleteAllImages);
 
 
 router.delete('/delete-user/:email', apiController.deleteUser);

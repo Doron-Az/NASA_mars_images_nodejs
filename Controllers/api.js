@@ -41,6 +41,12 @@ exports.deleteImage = async(req, res) => {
     result ? res.send(true) : res.send(false);
 }
 
+exports.deleteAllImages = async(req, res) => {
+
+    const result = await dbModels.MarsImage.destroy({ where: { email: req.session.isConnected } })
+    result ? res.send(true) : res.send(false);
+}
+
 
 exports.geSavedImageList = async(req, res) => {
 

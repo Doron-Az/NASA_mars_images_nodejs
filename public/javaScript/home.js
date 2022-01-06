@@ -167,10 +167,17 @@ let makerHTML = (() => {
      */
     publicData.makeToSavedListImageHTML = function(image) {
         return `<li class="m-1"> 
-                    <button type="button" class="btn btn-sm btn-outline-danger deleteBtn">X</button>
+                    <span class="${image.imageId}">
+                        <button type="button" class="btn btn-sm btn-outline-danger askDeleteBtn togglevisible d-none">X</button>
+                    </span>
+                    <div class="${image.imageId} d-none">
+                    <button type="button" class="btn btn-sm btn-outline-danger askDeleteBtn" id="noDeleteBtn">No</button>
+                    <button type="button" class="btn btn-sm btn-outline-success deleteBtn">Yes</button>
+                </div>
                     <a href="${image.url}" target="_blank">image id: ${image.imageId} </a>
                     </br>Earth date: ${image.date}, Sol: ${image.sol},
                     Camera: ${image.camera}, Mission: ${image.mission}
+                   
                 </li>`;
     }
 
@@ -381,7 +388,7 @@ let makerHTML = (() => {
 
     function deleteFromSaveList() {
 
-        const imageId = this.nextElementSibling.textContent.replace(/\D/g, "");
+        const imageId = this.parentElement.getAttribute('class');
 
         fetch("/api/resources/delete-image", {
             method: "DELETE",
@@ -407,6 +414,11 @@ let makerHTML = (() => {
     function viewErrorModal(text) {
         let modal = new bootstrap.Modal(document.getElementById("errorModal"));
         document.getElementById("errorModalText").innerHTML = text;
+        modal.show();
+    }
+
+    function deleteAllSavedImageListModal() {
+        let modal = new bootstrap.Modal(document.getElementById("deleteAllSavedImageList"));
         modal.show();
     }
 
@@ -596,8 +608,42 @@ let makerHTML = (() => {
         for (const b of document.getElementsByClassName("deleteBtn")) {
             b.addEventListener('click', deleteFromSaveList);
         }
+        for (const b of document.getElementsByClassName("askDeleteBtn")) {
+            b.addEventListener('click', (e) => {
+
+                let imageId = e.target.parentElement.getAttribute('class');
+
+                let list = document.getElementsByClassName(imageId);
+
+                for (let i of list)
+                    i.classList.toggle("d-none");
+
+            });
+        }
 
     }
+
+
+
+    function deleteSavedListImages() {
+
+
+        fetch("/api/resources/delete-all-image-list", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+        }).then(function(response) {
+            return response.json();
+        }).then(() => {
+
+            setListOfSavedImages([]);
+
+        }).catch(function(error) {
+            viewErrorModal(error);
+            console.log(error);
+        });
+
+    }
+
 
     document.addEventListener('DOMContentLoaded', function() {
 
@@ -614,5 +660,22 @@ let makerHTML = (() => {
             carouselElem.classList.add("d-none");
         });
         document.getElementById("clearBtn").addEventListener("click", clearDataPage);
+
+        document.getElementById("editBtn").addEventListener("click", (e) => {
+
+            let list = document.getElementsByClassName("togglevisible");
+
+            e.target.innerHTML = e.target.innerHTML === "Edit Mode" ? "Stop Edit Mode" : "Edit Mode";
+
+            for (let i of list)
+                i.classList.toggle("d-none");
+        });
+
+
+        document.getElementById("confirmDeleteSavedList").addEventListener("click", deleteSavedListImages);
+        document.getElementById("clearAllBtn").addEventListener("click", deleteAllSavedImageListModal);
+
+
+
     });
 })();

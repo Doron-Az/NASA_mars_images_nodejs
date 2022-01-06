@@ -56,6 +56,9 @@
                     <h4 class="alert alert-dark fw-bold"> <b>Saved images:</b></h4>
                     <button type="button" class="btn btn-secondary" id="slideShowBtn"> Start slide show</button>
                     <button type="button" class="btn btn-danger" id="stopSlideShowBtn"> Stop slide show</button>
+                    <button type="button" class="btn btn-outline-secondary" id="editBtn">Edit Mode</button>
+                    <button type="button" class="btn btn-dark togglevisible d-none" id="clearAllBtn">Clear all</button>
+
 
                     <ol id="savedList">
                     </ol>
@@ -125,6 +128,26 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--custom modal-->
+    <div class="modal" tabindex="-1" id="deleteAllSavedImageList">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Warning</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="errorModalText">You're about to delete all the photos you saved, are you sure you want to continue?</p>
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-sm btn-outline-danger" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-sm btn-outline-success" data-bs-dismiss="modal" id="confirmDeleteSavedList">Yes</button>
                 </div>
             </div>
         </div>
