@@ -16,7 +16,6 @@ exports.isValidEmail = (req, res) => {
 exports.addImage = async(req, res) => {
 
     const { image } = req.body;
-
     const isExist = await dbModels.MarsImage.findOne({ where: { email: req.session.isConnected, imageId: image.id } });
 
     if (!isExist)
