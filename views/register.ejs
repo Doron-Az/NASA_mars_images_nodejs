@@ -5,6 +5,8 @@
             <%= error_msg %>
         </h2>
         <div id="loadingBuffering" class="d-none"></div>
+        <form id="backForm" type="hidden" action="/" method="post">
+        </form>
         <form id="passwordForm" action="register/result" method="post">
             <div class="row" id="registerForm">
                 <div class="col-md-3 col-lg-4"></div>
@@ -15,31 +17,26 @@
                             <h5 class="m-2"><b>Sign Up</b></h5>
                             <div class="form-group m-2">
                                 <label for="emailInput" class="form-label">Email address</label>
-                                <input type="email" class="form-control " id="emailInput" name="emailInput"
-                                    aria-describedby="emailHelp" placeholder="Enter email" required>
+                                <input type="email" class="form-control " id="emailInput" name="emailInput" aria-describedby="emailHelp" placeholder="Enter email" required>
                                 <div class="text-danger errormessage"></div>
 
                             </div>
                             <div class="form-group m-2">
                                 <label for="firstNameInput" class="form-label">First name</label>
-                                <input type="text" class="form-control" id="firstNameInput" name="firstNameInput"
-                                    placeholder="First name">
+                                <input type="text" class="form-control" id="firstNameInput" name="firstNameInput" placeholder="First name">
                                 <div class="text-danger errormessage"></div>
 
                             </div>
                             <div class="form-group m-2">
                                 <label for="lastNameInput" class="form-label">Last name</label>
-                                <input type="text" class="form-control" id="lastNameInput" name="lastNameInput"
-                                    placeholder="Last name">
+                                <input type="text" class="form-control" id="lastNameInput" name="lastNameInput" placeholder="Last name">
                                 <div class="text-danger errormessage"></div>
 
                             </div>
 
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end m-3">
-                                <button type="button" onclick="history.back()"
-                                    class="button btn btn-secondary">Back</button>
-                                <button type="button" id="registerFirstPart"
-                                    class="btn btn-primary">Continue</button>
+                                <button type="button" class="button btn btn-secondary backBtn">Back</button>
+                                <button type="button" id="registerFirstPart" class="btn btn-primary">Continue</button>
                             </div>
                         </div>
                     </div>
@@ -56,22 +53,21 @@
                             <h5><b>Please enter password</b></h5>
                             <div class="form-group m-2">
                                 <label for="passwordInput">Password</label>
-                                <input type="password" class="form-control" name="passwordInput" id="passwordInput"
-                                    placeholder="Password">
+                                <input type="password" class="form-control" name="passwordInput" id="passwordInput" placeholder="Password">
                                 <div class="text-danger errormessage"></div>
 
                             </div>
                             <div class="form-group m-2">
                                 <label for="comfirmPasswordInput">Confirm Password</label>
-                                <input type="password" class="form-control" name="confirmPasswordInput"
-                                    id="confirmPasswordInput" placeholder="Password">
+                                <input type="password" class="form-control" name="confirmPasswordInput" id="confirmPasswordInput" placeholder="Password">
                                 <div class="text-danger errormessage"></div>
 
                             </div>
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end m-3">
-                                <button type="button" onclick="history.back()"
-                                    class="button btn btn-secondary">Back</button>
+
+                                <button type="button" class="button btn btn-secondary backBtn">Back</button>
                                 <button type="submit" class="btn btn-primary">Finish</button>
+                                <div>Registration closes in <span id="time">01:00</span> minutes!</div>
                             </div>
                         </div>
                     </div>

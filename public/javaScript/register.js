@@ -158,6 +158,24 @@ const validatorModule = (function() {
         return v1 && v2;
     }
 
+    function startTimer(duration, display) {
+        var timer = duration,
+            minutes, seconds;
+        setInterval(function() {
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            display.textContent = minutes + ":" + seconds;
+
+            if (--timer < 0) {
+                timer = duration;
+            }
+        }, 1000);
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
 
         let emailInputElem = document.getElementById("emailInput");
@@ -165,6 +183,11 @@ const validatorModule = (function() {
         let lastNameInputElem = document.getElementById("lastNameInput");
         let passwordInputElem = document.getElementById("passwordInput");
         let confirmPasswordInputElem = document.getElementById("confirmPasswordInput");
+
+        var backBtns = document.getElementsByClassName("backBtn");
+        for (let i of backBtns)
+            i.addEventListener('click', () => { document.getElementById("backForm").submit(); });
+
 
         document.getElementById("registerFirstPart").addEventListener("click", (event) => {
             document.querySelector("#loadingBuffering").classList.remove('d-none');
@@ -177,10 +200,15 @@ const validatorModule = (function() {
             }).then(function(data) {
 
                 if (validateFirstRegisterInput(firstNameInputElem, lastNameInputElem, emailInputElem, data)) {
+                    var oneMinutes = 2 * 1,
+                        display = document.querySelector('#time');
+                    startTimer(oneMinutes, display);
 
                     setCookie("registerTimer", "");
                     document.getElementById("registerForm").classList.add('d-none');
                     document.getElementById("passwordDiv").classList.remove('d-none');
+
+                    setTimeout((() => { document.getElementById("backForm").submit(); }), (2 + 1) * 1000);
                 }
                 document.querySelector("#loadingBuffering").classList.add('d-none');
 
@@ -199,7 +227,7 @@ const validatorModule = (function() {
                 delete_cookie("registerTimer");
                 document.getElementById("passwordForm").submit();
             }
-
         });
+
     });
 })();

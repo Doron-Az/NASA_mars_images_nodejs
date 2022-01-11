@@ -1,6 +1,7 @@
 const registerController = require('../Controllers/register');
 var express = require('express');
 const Cookies = require("cookies");
+const { sequelize } = require('../models');
 var router = express.Router();
 
 const keys = ['keyboard cat']

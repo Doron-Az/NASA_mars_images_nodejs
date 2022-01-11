@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const dbModels = require("../models"); //contain the User model
+let session = require('express-session');
 
 
 /* GET home page. */
@@ -23,9 +24,7 @@ router.post('/', function(req, res) {
 });
 
 router.post('/logout', async function(req, res) {
-    req.session.destroy({ email: req.session.isConnected });
-    res.redirect('/login');
+    req.session.destroy();
+    res.redirect('/login') // will always fire after session is destroyed
 });
-
-
 module.exports = router;

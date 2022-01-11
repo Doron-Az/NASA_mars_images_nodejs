@@ -6,6 +6,7 @@ var logger = require('morgan');
 var http = require('http')
 var Cookies = require('cookies')
 var fs = require('fs')
+const bcrypt = require("bcrypt");
 
 
 var loginRouter = require('./routes/login');

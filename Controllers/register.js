@@ -5,8 +5,9 @@ const { is } = require('express/lib/request');
 const res = require('express/lib/response');
 const keys = ['keyboard cat']
 const dbModels = require("../models"); //contain the User model
+const bcrypt = require("bcrypt");
 
-exports.addUserToDataBase = async (req, res) => {
+exports.addUserToDataBase = async(req, res) => {
 
     const { cookies } = req;
     if (!('registerTimer' in cookies))
@@ -31,25 +32,30 @@ exports.addUserToDataBase = async (req, res) => {
             message: 'Sorry we could not register you \n Please try again'
         });
 
+    try {
+        //  const salt = await bcrtpy.getSalt(10);
+        const encryptedPassword = await bcrypt.hash(passwordInput, 10)
+        dbModels.User.create({ firstName: firstNameInput, lastName: lastNameInput, email: emailInput, password: encryptedPassword })
+            .then(() => {
+                return res.render('success', {
+                    pageTitle: "NASA Success",
+                    scriptPath: "",
+                    user_name: firstNameInput.charAt(0).toUpperCase() + firstNameInput.slice(1) + " " + lastNameInput.charAt(0).toUpperCase() + lastNameInput.slice(1)
+                })
 
-    dbModels.User.create({ firstName: firstNameInput, lastName: lastNameInput, email: emailInput, password: passwordInput })
-        .then(() => {
-            return res.render('success', {
-                pageTitle: "NASA Success",
-                scriptPath: "",
-                user_name: firstNameInput.charAt(0).toUpperCase() + firstNameInput.slice(1) + " " + lastNameInput.charAt(0).toUpperCase() + lastNameInput.slice(1)
+            })
+            .catch(() => {
+                return res.render('myError', {
+                    pageTitle: "NASA Error",
+                    scriptPath: "",
+                    message: "req.session.error"
+                });
             })
 
-        })
-        .catch(() => {
-            return res.render('myError', {
-                pageTitle: "NASA Error",
-                scriptPath: "",
-                message: "req.session.error"
-            });
-        })
+    } catch {
+        return res.send(oops);
+    }
+
+
+
 }
-
-
-
-

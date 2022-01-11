@@ -3,6 +3,7 @@ var express = require('express');
 const { redirect } = require('express/lib/response');
 var router = express.Router();
 const dbModels = require("../models"); //contain the User model
+const bcrypt = require("bcrypt");
 
 
 exports.getLogin = (req, res) => {
@@ -27,24 +28,29 @@ exports.getLogin = (req, res) => {
 }
 
 exports.postLogin = (req, res) => {
+
     req.session.errorEmail = "";
     req.session.errorPassword = "";
     req.session.emailHidden = "";
 
-    const { emailInput, passwordInput } = req.body;
-    dbModels.User.findOne({ where: { email: emailInput } })
-        .then((user) => {
-            if (user.password === passwordInput) {
-                req.session.isConnected = emailInput;
-                res.redirect('/');
-            } else {
-                req.session.errorPassword = 'The password you entered is incorrect';
-                req.session.emailHidden = emailInput;
+    try {
+        const { emailInput, passwordInput } = req.body;
+        dbModels.User.findOne({ where: { email: emailInput } })
+            .then(async(user) => {
+                if (await bcrypt.compare(passwordInput, user.password)) {
+                    req.session.isConnected = emailInput;
+                    res.redirect('/');
+                } else {
+                    req.session.errorPassword = 'The password you entered is incorrect';
+                    req.session.emailHidden = emailInput;
+                    res.redirect('/login');
+                }
+            })
+            .catch(() => {
+                req.session.errorEmail = 'There is no user with this email, please try another email';
                 res.redirect('/login');
-            }
-        })
-        .catch(() => {
-            req.session.errorEmail = 'There is no user with this email, please try another email';
-            res.redirect('/login');
-        })
+            })
+    } catch {
+
+    }
 }

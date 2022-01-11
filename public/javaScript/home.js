@@ -748,11 +748,12 @@ let makerHTML = (() => {
     }
 
 
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', async function() {
 
         setGlobalVariables()
         getDataOfMissions();
         getListOfSavedImages();
+
 
 
         document.getElementById("confirmLogOut").addEventListener('click', () => {
