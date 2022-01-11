@@ -1,6 +1,5 @@
 "use strict";
 
-
 /**
  * A module that maintains 2 classes.
  * Task class and image class.
@@ -165,19 +164,21 @@ let makerHTML = (() => {
      * @param image - Image object that contain the date image.
      * @returns {string} - HTML to add to our page.
      */
-    publicData.makeToSavedListImageHTML = function(image) {
+    publicData.makeToSavedListImageHTML = function(image, boolEditMode) {
+
+        let editModeDNon = boolEditMode ? "" : "d-none";
+
         return `<li class="m-1"> 
-                    <span class="${image.imageId}">
-                        <button type="button" class="btn btn-sm btn-outline-danger askDeleteBtn togglevisible d-none">X</button>
+                    <span class="${image.imageId} togglevisible ${editModeDNon}">
+                        <button type="button" class="btn btn-sm btn-outline-danger askDeleteBtn">X</button>
                     </span>
-                    <div class="${image.imageId} d-none">
-                    <button type="button" class="btn btn-sm btn-outline-danger askDeleteBtn" id="noDeleteBtn">No</button>
-                    <button type="button" class="btn btn-sm btn-outline-success deleteBtn">Yes</button>
-                </div>
+                    <div class="${image.imageId} visibleYN d-none">
+                        <button type="button" class="btn btn-sm btn-outline-danger askDeleteBtn" id="noDeleteBtn">No</button>
+                        <button type="button" class="btn btn-sm btn-outline-success deleteBtn ">Yes</button>
+                    </div>
                     <a href="${image.url}" target="_blank">image id: ${image.imageId} </a>
                     </br>Earth date: ${image.date}, Sol: ${image.sol},
                     Camera: ${image.camera}, Mission: ${image.mission}
-                   
                 </li>`;
     }
 
@@ -221,7 +222,6 @@ let makerHTML = (() => {
 
     //The lists we use during the program
     let imagesList = [];
-    let imagesSavedIdList = [];
     let missionsList = [];
 
     //Elements that we define at the beginning of the program so as
@@ -235,6 +235,8 @@ let makerHTML = (() => {
     let noImagesFoundElem = null;
     let loadingBuffer = null;
     let isEmpyCarousel = "active";
+    let boolEditMode = false;
+
 
     //const str of errors during program.
     const MSG_FAILED_LOAD_DATA = '"We were unable to load the information, please refresh the page and try again."';
@@ -391,7 +393,7 @@ let makerHTML = (() => {
 
     function deleteFromSaveList() {
 
-        const imageId = this.parentElement.getAttribute('class');
+        const imageId = this.parentElement.getAttribute('class').replace(/\D/g, '');
         loadingBuffer.classList.remove("d-none");
 
         fetch("/api/resources/delete-image", {
@@ -401,11 +403,17 @@ let makerHTML = (() => {
         }).then(function(response) {
             return response.json();
         }).then(function(data) {
-
-            if (data)
-                getListOfSavedImages();
-
             loadingBuffer.classList.add("d-none");
+
+            console.log(data.image_left);
+            console.log(data.isDelete);
+
+            if (data.image_left === 0)
+                editSavedList();
+
+            getListOfSavedImages();
+
+            return data.isDelete;
 
         }).catch(function(error) {
             loadingBuffer.classList.add("d-none");
@@ -414,11 +422,14 @@ let makerHTML = (() => {
         });
     }
 
+
     /**
      * Present using the message model you receive.
      * @param text - the string we want to view on the modal.
      */
     function viewErrorModal(text) {
+
+
         let modal = new bootstrap.Modal(document.getElementById("errorModal"));
         document.getElementById("errorModalText").innerHTML = text;
         modal.show();
@@ -525,6 +536,8 @@ let makerHTML = (() => {
         if (validateAllInput()) {
             imagesList = [];
             getDataImageGallery(dateInput.value, missionInput.value, cameraInput.value);
+            if (boolEditMode)
+                editSavedList();
         }
     }
 
@@ -594,7 +607,6 @@ let makerHTML = (() => {
         }).then(function(data) {
 
             setListOfSavedImages(data);
-
             loadingBuffer.classList.add("d-none");
 
             return data;
@@ -614,7 +626,7 @@ let makerHTML = (() => {
         isEmpyCarousel = "active";
 
         savedList.forEach((image) => {
-            savedImagesListElem.innerHTML += makerHTML.makeToSavedListImageHTML(image);
+            savedImagesListElem.innerHTML += makerHTML.makeToSavedListImageHTML(image, boolEditMode);
             document.getElementById("myCarousel").innerHTML += makerHTML.makeImageCarouselHTML(image, isEmpyCarousel);
             isEmpyCarousel = "";
         })
@@ -623,19 +635,23 @@ let makerHTML = (() => {
         for (const b of document.getElementsByClassName("deleteBtn")) {
             b.addEventListener('click', deleteFromSaveList);
         }
+
+        //the function reflace the X button and the YES NO buttons
         for (const b of document.getElementsByClassName("askDeleteBtn")) {
             b.addEventListener('click', (e) => {
 
-                let imageId = e.target.parentElement.getAttribute('class');
+                //taking the ID image by the class of the element and removed the latters from the class string
+                let imageId = e.target.parentElement.getAttribute('class').replace(/\D/g, '');
+                let imageElements = document.getElementsByClassName(imageId);
 
-                let list = document.getElementsByClassName(imageId);
-
-                for (let i of list)
+                for (let i of imageElements)
                     i.classList.toggle("d-none");
-
             });
         }
+
     }
+
+
 
     function deleteSavedListImages() {
 
@@ -653,7 +669,6 @@ let makerHTML = (() => {
 
             loadingBuffer.classList.add("d-none");
 
-
         }).catch(function(error) {
             loadingBuffer.classList.add("d-none");
             viewErrorModal(error);
@@ -664,12 +679,13 @@ let makerHTML = (() => {
 
     function CustomizeButton(e, strA, strB) {
 
+        console.log(e.innerHTML);
+
         if (isEmpyCarousel !== "active") {
             if (e.innerHTML === strA) {
                 e.innerHTML = strB;
             } else
                 e.innerHTML = strA;
-
 
             e.classList.toggle('btn-secondary');
             e.classList.toggle('btn-outline-secondary');
@@ -696,14 +712,41 @@ let makerHTML = (() => {
         if (!document.getElementById("imagesCarousel").classList.contains('d-none'))
             slideShowCarousel();
 
-
         if (CustomizeButton(document.getElementById("editBtn"), "Edit Mode", "Stop Edit Mode")) {
-            let list = document.getElementsByClassName("togglevisible");
 
-            for (let i of list)
+            boolEditMode = !boolEditMode;
+            //the  X button list
+            let listX = document.getElementsByClassName("togglevisible");
+            let listYN = document.getElementsByClassName("visibleYN")
+
+            //the Yes No buttons
+
+            if (document.getElementById("editBtn").innerHTML === 'Edit Mode') {
+
+
+                for (let i of listYN)
+                    i.classList.add("d-none");
+
+                for (let i of listX)
+                    i.classList.remove("d-none");
+            }
+
+
+            for (let i of listX)
                 i.classList.toggle("d-none");
+
         }
+        return true;
     }
+
+    function disconnectUser(e) {
+
+        e.preventDefault();
+        let modal = new bootstrap.Modal(document.getElementById("logoutModal"));
+        modal.show();
+
+    }
+
 
     document.addEventListener('DOMContentLoaded', function() {
 
@@ -711,12 +754,16 @@ let makerHTML = (() => {
         getDataOfMissions();
         getListOfSavedImages();
 
+
+        document.getElementById("confirmLogOut").addEventListener('click', () => {
+            document.getElementById("homePageForm").submit();
+        })
+
         document.getElementById("form-nasa-api").addEventListener("submit", searchImages);
         document.getElementById("clearBtn").addEventListener("click", clearDataPage);
         document.getElementById("editBtn").addEventListener("click", editSavedList);
         document.getElementById("slideShowBtn").addEventListener("click", slideShowCarousel);
-
-
+        document.getElementById("logoutBtn").addEventListener('click', disconnectUser)
         document.getElementById("confirmDeleteSavedList").addEventListener("click", deleteSavedListImages);
         document.getElementById("clearAllBtn").addEventListener("click", deleteAllSavedImageListModal);
     });

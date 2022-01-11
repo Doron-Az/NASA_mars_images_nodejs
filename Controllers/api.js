@@ -43,7 +43,9 @@ exports.addImage = async(req, res) => {
 exports.deleteImage = async(req, res) => {
 
     const result = await dbModels.MarsImage.destroy({ where: { email: req.session.isConnected, imageId: req.body.imageId } })
-    result ? res.send(true) : res.send(false);
+    const count = await dbModels.MarsImage.findAll({ where: { email: req.session.isConnected } });
+    //the api task return if the image deleted and how much images left at the data. 
+    result ? res.send({ isDelete: true, image_left: count.length }) : res.send({ isDelete: false, image_left: count.length });
 }
 
 exports.deleteAllImages = async(req, res) => {

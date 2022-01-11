@@ -1,50 +1,51 @@
 <%- include('includes/head.ejs') %>
 
+    <div class="container-fluid">
 
-    <div id="loadingBuffering" class="d-none"></div>
-    <input type="hidden" id="errorMsgEmail" name="errorMsgEmail" value="<%=error_msg_email%>">
-    <input type="hidden" id="errorMsgPassword" name="errorMsgPassword" value="<%=error_msg_password %>">
-    <input type="hidden" id="emailHidden" name="emailHidden" value="<%=email_hidden%>">
+        <div id="loadingBuffering" class="d-none"></div>
+        <input type="hidden" id="errorMsgEmail" name="errorMsgEmail" value="<%=error_msg_email%>">
+        <input type="hidden" id="errorMsgPassword" name="errorMsgPassword" value="<%=error_msg_password %>">
+        <input type="hidden" id="emailHidden" name="emailHidden" value="<%=email_hidden%>">
 
-    <div class="row m-3" id="test">
-        <div class="col-md-3 col-lg-4"></div>
-        <div class="col-12 col-md-6 col-lg-4">
+        <div class="row m-3" id="test">
+            <div class="col-md-3 col-lg-4"></div>
+            <div class="col-12 col-md-6 col-lg-4">
 
-            <div class="card">
-                <img src="../images/nasa-logo.gif" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <h5><b>Please Login or sign up</b></h5>
-                    <form id="loginForm" action="/login" method="post">
-                        <div class="form-group">
-                            <label for="emailInput">Email address</label>
-                            <input type="email" class="form-control" id="emailInput" name="emailInput" aria-describedby="emailHelp" placeholder="Enter email" required>
-                            <div class="text-danger errormessage"></div>
-                        </div>
-                        <div class="form-group">
-                            <label for="passwordInput">Password</label>
-                            <input type="password" class="form-control" id="passwordInput" name="passwordInput" placeholder="Password" required>
-                            <div class="text-danger errormessage"></div>
-                        </div>
+                <div class="card">
+                    <img src="../images/nasa-logo.gif" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5><b>Please Login or sign up</b></h5>
+                        <form id="loginForm" action="/login" method="post">
+                            <div class="form-group">
+                                <label for="emailInput">Email address</label>
+                                <input class="form-control" id="emailInput" name="emailInput" aria-describedby="emailHelp" placeholder="Enter email">
+                                <div class="text-danger errormessage"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="passwordInput">Password</label>
+                                <input type="password" class="form-control" id="passwordInput" name="passwordInput" placeholder="Password">
+                                <div class="text-danger errormessage"></div>
+                            </div>
 
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <button type="submit" class="btn btn-outline-primary m-2">Login</button>
-                        </div>
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <button id="loginBtb" name="loginBtb" type="submit" class="btn btn-primary m-2">Login</button>
+                            </div>
 
-                    </form>
+                        </form>
 
-                    <form id="signUpForm" method="post" action="/register">
-                        <p class="text-center">Don't have an account?
-                            <button type="submit" formaction="/register" class="text-primary btn btn-outline-light">Sign
-                                Up
-                            </button>
-                        </p>
-                    </form>
+                        <form id="signUpForm" method="post" action="/register">
+                            <p class="text-center">Don't have an account?
+                                <button type="submit" formaction="/register" class="text-primary btn btn-light">Sign
+                                    Up
+                                </button>
+                            </p>
+                        </form>
 
+                    </div>
                 </div>
             </div>
+            <div class="col-md-3 col-lg-4"></div>
         </div>
-        <div class="col-md-3 col-lg-4"></div>
-    </div>
     </div>
 
     <%- include('includes/end.ejs') %>

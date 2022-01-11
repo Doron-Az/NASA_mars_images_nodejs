@@ -37,8 +37,9 @@ exports.addUserToDataBase = async (req, res) => {
             return res.render('success', {
                 pageTitle: "NASA Success",
                 scriptPath: "",
-                user_name: firstNameInput + " " + lastNameInput
+                user_name: firstNameInput.charAt(0).toUpperCase() + firstNameInput.slice(1) + " " + lastNameInput.charAt(0).toUpperCase() + lastNameInput.slice(1)
             })
+
         })
         .catch(() => {
             return res.render('myError', {

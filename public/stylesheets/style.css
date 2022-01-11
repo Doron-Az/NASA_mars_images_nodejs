@@ -1,6 +1,6 @@
-
+@charset "UTF-8";
 body {
-    background-color:#f2f2f2 !important;
+    background-color: #f2f2f2 !important;
 }
 
 .card {
@@ -28,4 +28,29 @@ body {
     height: 100%;
     width: 100%;
     z-index: 9999999;
+}
+
+#iconName {
+    width: 60px;
+    border-radius: 0 50% 50% 50%;
+    padding: 3px;
+    border: 2px solid #ffffff;
+    float: left;
+}
+
+#successImage {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 40%;
+}
+
+#marsBanner {
+    background: url(../images/mars-banner.jpg);
+    color: white;
+    text-align: center;
+}
+
+#logoutBtn {
+    float: right;
 }
