@@ -1,30 +1,16 @@
 var express = require('express');
+const middleWare = require('../Controllers/middleWare');
 var router = express.Router();
 const dbModels = require("../models"); //contain the User model
-let session = require('express-session');
+const homePageController = require('../Controllers/home');
 
 
 /* GET home page. */
-router.get('/', async function(req, res) {
+router.get('/', middleWare.isConnected, homePageController.getHome);
+router.post('/', (req, res) => { res.redirect('/'); });
 
-    if (req.session.isConnected) {
-        const user = await dbModels.User.findOne({ where: { email: req.session.isConnected } });
-        res.render('home', {
-            pageTitle: "NASA",
-            scriptPath: "javaScript/home.js",
-            user_first_name: user.firstName.charAt(0).toUpperCase() + user.firstName.slice(1),
-            user_last_name: user.lastName.charAt(0).toUpperCase() + user.lastName.slice(1)
-        });
-    } else
-        res.redirect('login');
-});
+router.get('/logout', (req, res) => { res.redirect('/'); });
+router.post('/logout', homePageController.postLogout);
 
-router.post('/', function(req, res) {
-    res.redirect('/');
-});
-
-router.post('/logout', async function(req, res) {
-    req.session.destroy();
-    res.redirect('/login') // will always fire after session is destroyed
-});
 module.exports = router;
+

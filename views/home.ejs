@@ -7,62 +7,71 @@
                 <div class="container py-5">
                     <h1 class="display-4 font-weight-bold">Mars images browser</h1>
                     <p class="font-italic mb-2">Browse NASA Mars images and save your preferred ones..</p>
-                    <button type="button" class="btn btn-dark px-5" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                        About
-                    </button>
                 </div>
             </div>
         </div>
 
         <div class="row">
+            <nav class="navbar navbar-expand-none navbar-dark bg-dark text-white">
+                <a href="#" class="navbar-brand">
+                    <img id="iconName"
+                        src="https://avatars.dicebear.com/api/initials/:<%=user_first_name%>-<%=user_last_name%>.svg"
+                        alt="...">
+                    <span class="capitalize">&nbsp; Welcome,
+                        <%=user_first_name%>
+                            <%=user_last_name%>
+                    </span>
+                </a>
 
-            <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <div class="container-fluid">
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-              </button>
-                    <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-                        <a class="navbar-brand" href="#">Hidden brand</a>
-                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                            <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" href="#">Home</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Link</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-                            </li>
-                        </ul>
-                        <form class="d-flex">
-                            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                            <button class="btn btn-outline-success" type="submit">Search</button>
-                        </form>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse text-center" id="navbarSupportedContent">
+                    <div class="navbar-nav">
+                        <a href="/" class="nav-item nav-link active">Home</a>
+
+                        <div class="nav-item dropdown vertical-center">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false"> Missions </a>
+
+                            <ul class="dropdown-menu bg-dark bg-gradient" aria-labelledby="navbarScrollingDropdown">
+                                <li><a class="dropdown-item text-center" href="https://mars.nasa.gov/msl/home/"
+                                        target="_blank">Curiosity</a></li>
+                                <li><a class="dropdown-item text-center"
+                                        href="https://www.jpl.nasa.gov/missions/mars-exploration-rover-spirit-mer-spirit"
+                                        target="_blank">Spirit</a></li>
+                                <li><a class="dropdown-item text-center" href="https://mars.nasa.gov/mars2020/"
+                                        target="_blank">Preseverance</a></li>
+                                <li><a class="dropdown-item text-center"
+                                        href="https://en.wikipedia.org/wiki/Opportunity_(rover)"
+                                        target="_blank">Opportunity</a></li>
+                            </ul>
+                        </div>
+
+                        <a class="nav-item nav-link" aria-current="page"
+                            href="https://mars.nasa.gov/mars2020/spacecraft/rover/cameras/" target="_blank">Cameras</a>
+
+                        <a class="nav-link nav-item" id="helpBtn">Help</a>
+
+                        <a class="nav-link nav-item" id='aboutBtn'>About</a>
+
+                        <a class="nav-link nav-item">
+                            <form id="homePageForm" method="post" action="/logout">
+                                <button type="submit" class="btn btn-danger" id="logoutBtn" name="logoutBtn">
+                                    LogOut</button>
+                            </form>
+                        </a>
                     </div>
                 </div>
             </nav>
         </div>
 
-        <form id="homePageForm" method="post" action="/logout">
-            <div class="row mt-2">
-                <div class="col-12">
-                    <button type="submit" id="logoutBtn" name="logoutBtn" class="btn btn-danger mt-2">LogOut</button>
-                    <img src="https://avatars.dicebear.com/api/initials/:<%=user_first_name%>-
-                <%=user_last_name%>.svg" class="img-fluid" id="iconName" alt="Avatar">
-                    <h3 class="mt-3 d-none d-sm-block"> <b>&nbsp;Welcome,
-                    <%=user_first_name%>
-                        <%=user_last_name%></b>
-                    </h3>
-                    <p class="mt-4 d-block d-sm-none"><b>Welcome,
-                    <%=user_first_name%>
-                        <%=user_last_name%></b>
-                    </p>
-                </div>
-            </div>
-        </form>
 
 
-        <div class="row">
+        <div class="row mt-3">
             <div class="col-12 col-md-6 ">
                 <form id="form-nasa-api">
                     <div class="m-2">
@@ -100,7 +109,8 @@
                     <h4 class="alert alert-dark fw-bold"> <b>Saved images</b></h4>
                     <button type="button" class="btn btn-secondary " id="slideShowBtn">Start slide show</button>
                     <button type="button" class="btn btn-secondary" id="editBtn">Edit Mode</button>
-                    <button type="button" class="btn btn-danger togglevisible d-none" style="float: right;" id="clearAllBtn">Clear all</button>
+                    <button type="button" class="btn btn-danger togglevisible d-none" style="float: right;"
+                        id="clearAllBtn">Clear all</button>
 
                     <ol id="savedList">
                     </ol>
@@ -115,11 +125,13 @@
                 <h4 class="p-3 mb-2 bg-dark text-white"><b>Slide Show</b></h4>
                 <div class="carousel-inner" id="myCarousel">
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#imagesCarousel" data-bs-slide="prev">
+                <button class="carousel-control-prev" type="button" data-bs-target="#imagesCarousel"
+                    data-bs-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                     <span class="visually-hidden">Previous</span>
                 </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#imagesCarousel" data-bs-slide="next">
+                <button class="carousel-control-next" type="button" data-bs-target="#imagesCarousel"
+                    data-bs-slide="next">
                     <span class="carousel-control-next-icon" aria-hidden="true"></span>
                     <span class="visually-hidden">Next</span>
                 </button>
@@ -136,7 +148,8 @@
 
 
         <!-- Modal -->
-        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -158,11 +171,11 @@
         </div>
 
         <!--custom modal-->
-        <div class="modal" tabindex="-1" id="errorModal">
+        <div class="modal text-center" tabindex="-1" id="errorModal">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Oops!</h5>
+                        <h5 class="modal-title" id="modal-title"></h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -184,12 +197,14 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <p id="errorModalText">You're about to delete all the photos you saved, are you sure you want to continue?
+                        <p id="errorModalText">You're about to delete all the photos you saved, are you sure you want to
+                            continue?
                         </p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-sm btn-danger " data-bs-dismiss="modal">No</button>
-                        <button type="button" class="btn btn-sm btn-success " data-bs-dismiss="modal" id="confirmDeleteSavedList">Yes</button>
+                        <button type="button" class="btn btn-sm btn-success " data-bs-dismiss="modal"
+                            id="confirmDeleteSavedList">Yes</button>
                     </div>
                 </div>
             </div>
@@ -208,7 +223,8 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-sm btn-danger " data-bs-dismiss="modal">No</button>
-                        <button type="button" class="btn btn-sm btn-success " data-bs-dismiss="modal" id="confirmLogOut">Yes</button>
+                        <button type="button" class="btn btn-sm btn-success " data-bs-dismiss="modal"
+                            id="confirmLogOut">Yes</button>
                     </div>
                 </div>
             </div>

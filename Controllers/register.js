@@ -1,61 +1,59 @@
 'use strict';
-var Cookies = require('cookies');
-const e = require('express');
-const { is } = require('express/lib/request');
-const res = require('express/lib/response');
-const keys = ['keyboard cat']
 const dbModels = require("../models"); //contain the User model
 const bcrypt = require("bcrypt");
 
-exports.addUserToDataBase = async(req, res) => {
-
-    const { cookies } = req;
-    if (!('registerTimer' in cookies))
-        return res.render('myError', {
-            pageTitle: "NASA Error",
-            scriptPath: "",
-            message: "Too late, hurry up next time"
-        });
-
+exports.addUserToDataBase = (req, res) => {
 
     const { firstNameInput, lastNameInput, emailInput, passwordInput } = req.body;
-    const user = await dbModels.User.findOne({ where: { email: emailInput } });
-    const v_email = user ? false : true;
-    const v_first_name = /^[a-zA-Z]+$/.test(firstNameInput);
-    const v_last_name = /^[a-zA-Z]+$/.test(lastNameInput);
-    const v_password = passwordInput.length > 7;
 
-    if (!(v_first_name && v_last_name && v_email && v_password))
-        return res.render('myError', {
-            pageTitle: "NASA Error",
-            scriptPath: "",
-            message: 'Sorry we could not register you \n Please try again'
-        });
+    return bcrypt.hash(passwordInput, 10)
+        .then((encryptedPassword) => {
+            return dbModels.User.create({
+                firstName: firstNameInput,
+                lastName: lastNameInput,
+                email: emailInput,
+                password: encryptedPassword
+            })
 
-    try {
-        //  const salt = await bcrtpy.getSalt(10);
-        const encryptedPassword = await bcrypt.hash(passwordInput, 10)
-        dbModels.User.create({ firstName: firstNameInput, lastName: lastNameInput, email: emailInput, password: encryptedPassword })
-            .then(() => {
-                return res.render('success', {
+        }).then((isRegister) => {
+            if (isRegister)
+                res.render('success', {
                     pageTitle: "NASA Success",
                     scriptPath: "",
-                    user_name: firstNameInput.charAt(0).toUpperCase() + firstNameInput.slice(1) + " " + lastNameInput.charAt(0).toUpperCase() + lastNameInput.slice(1)
-                })
-
-            })
-            .catch(() => {
-                return res.render('myError', {
-                    pageTitle: "NASA Error",
-                    scriptPath: "",
-                    message: "req.session.error"
+                    user_name: firstNameInput + " " + lastNameInput
                 });
-            })
 
-    } catch {
-        return res.send(oops);
-    }
+            else
+                throw "";
 
-
-
+        }).catch(() => {
+            res.render('myError', {
+                pageTitle: "NASA Error",
+                scriptPath: "",
+                message: "Sorry, registration failed Please try again."
+            });
+        })
 }
+
+exports.getRegister = (req, res) => {
+
+    if (req.session.isConnected)
+        res.redirect('/');
+
+    res.render('register', {
+        pageTitle: "NASA Sign Up",
+        scriptPath: "javaScript/register.js",
+        error_msg: ""
+    });
+}
+
+exports.postTimeOut = (req, res) => {
+
+    res.render('myError', {
+        pageTitle: "NASA Error",
+        scriptPath: "",
+        message: "Too late, hurry up next time"
+    });
+}
+
+

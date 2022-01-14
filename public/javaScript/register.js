@@ -48,6 +48,11 @@ const validatorModule = (function() {
 
 (function() {
 
+    let emailInputElem = null;
+    let firstNameInputElem = null;
+    let lastNameInputElem = null;
+    let passwordInputElem = null;
+    let confirmPasswordInputElem = null;
 
     function setCookie(cname, cvalue) {
         const d = new Date();
@@ -77,22 +82,6 @@ const validatorModule = (function() {
             document.cookie = name + "=" + ";expires=Thu, 01 Jan 1970 00:00:01 GMT";
         }
     }
-    //  If the cookie is set it will display a greeting.
-
-    //  If the cookie is not set, it will display a prompt box,
-    //  asking for the name of the user, and stores the username cookie 
-    //  for 365 days, by calling the setCookie function:
-    function checkCookie() {
-        let username = getCookie("username");
-        if (username != "") {
-            alert("Welcome again " + username);
-        } else {
-            username = prompt("Please enter your name:", "");
-            if (username != "" && username != null) {
-                setCookie("username", username, 365);
-            }
-        }
-    }
 
     /**
      * Present using the message model you receive.
@@ -110,10 +99,10 @@ const validatorModule = (function() {
 
         if (inputElement.length === 1) {
             v = validateFunc(inputElement[0].value); // call the validation function
-            errorElement = inputElement[0].nextElementSibling; // the error message div
+            errorElement = inputElement[0].parentElement.nextElementSibling; // the error message div
         } else {
             v = validateFunc(inputElement[0].value, inputElement[1].value); // call the validation function
-            errorElement = inputElement[0].nextElementSibling; // the error message div
+            errorElement = inputElement[0].parentElement.nextElementSibling; // the error message div
         }
 
         errorElement.innerHTML = v.isValid ? '' : v.message; // display the error message
@@ -122,7 +111,6 @@ const validatorModule = (function() {
     }
 
     const validateFirstRegisterInput = (firstNameInputElem, lastNameInputElem, emailInputElem, data) => {
-
         firstNameInputElem.value = firstNameInputElem.value.trim().toLowerCase();
         lastNameInputElem.value = lastNameInputElem.value.trim().toLowerCase();
         emailInputElem.value = emailInputElem.value.trim().toLowerCase();
@@ -178,20 +166,15 @@ const validatorModule = (function() {
 
     document.addEventListener('DOMContentLoaded', function() {
 
-        let emailInputElem = document.getElementById("emailInput");
-        let firstNameInputElem = document.getElementById("firstNameInput");
-        let lastNameInputElem = document.getElementById("lastNameInput");
-        let passwordInputElem = document.getElementById("passwordInput");
-        let confirmPasswordInputElem = document.getElementById("confirmPasswordInput");
+        emailInputElem = document.getElementById("emailInput");
+        firstNameInputElem = document.getElementById("firstNameInput");
+        lastNameInputElem = document.getElementById("lastNameInput");
+        passwordInputElem = document.getElementById("passwordInput");
+        confirmPasswordInputElem = document.getElementById("confirmPasswordInput");
 
-        var backBtns = document.getElementsByClassName("backBtn");
-        for (let i of backBtns)
-            i.addEventListener('click', () => { document.getElementById("backForm").submit(); });
-
-
-        document.getElementById("registerFirstPart").addEventListener("click", (event) => {
+        document.getElementById("registerFirstPart").addEventListener("click", () => {
             document.querySelector("#loadingBuffering").classList.remove('d-none');
-            fetch("/api/resources/isValidEmail", {
+            fetch("/api/resources/is-valid-email", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ "email": emailInputElem.value.trim() })
@@ -199,8 +182,8 @@ const validatorModule = (function() {
                 return response.json();
             }).then(function(data) {
 
-                if (validateFirstRegisterInput(firstNameInputElem, lastNameInputElem, emailInputElem, data)) {
-                    var oneMinutes = 2 * 1,
+                if (validateFirstRegisterInput(firstNameInputElem, lastNameInputElem, emailInputElem, data.email_exist)) {
+                    var oneMinutes = 60 * 1,
                         display = document.querySelector('#time');
                     startTimer(oneMinutes, display);
 
@@ -208,7 +191,7 @@ const validatorModule = (function() {
                     document.getElementById("registerForm").classList.add('d-none');
                     document.getElementById("passwordDiv").classList.remove('d-none');
 
-                    setTimeout((() => { document.getElementById("backForm").submit(); }), (2 + 1) * 1000);
+                    setTimeout((() => { document.getElementById("timeOutForm").submit(); }), (60 + 1) * 1000);
                 }
                 document.querySelector("#loadingBuffering").classList.add('d-none');
 

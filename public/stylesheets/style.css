@@ -1,4 +1,5 @@
 @charset "UTF-8";
+
 body {
     background-color: #f2f2f2 !important;
 }
@@ -13,9 +14,6 @@ body {
     width: 100%;
 }
 
-
-/* On mouse-over, add a deeper shadow */
-
 .card:hover {
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
 }
@@ -23,6 +21,7 @@ body {
 #loadingBuffering {
     background: url("../images/loading-buffering.gif") no-repeat center center;
     position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     height: 100%;
@@ -31,7 +30,7 @@ body {
 }
 
 #iconName {
-    width: 60px;
+    width: 40px;
     border-radius: 0 50% 50% 50%;
     border: 2px solid #494848;
     float: left;
@@ -50,6 +49,21 @@ body {
     text-align: center;
 }
 
-#logoutBtn {
-    float: right;
-}
+.vertical-center {
+    display: table;
+    margin: auto;
+  }
+
+  .dropdown-item {
+      color:white !important;
+      display: table;
+      margin: auto;
+  }
+
+  a:hover {
+    cursor:pointer;
+   }
+  
+   .capitalize{
+       text-transform: capitalize;
+   }

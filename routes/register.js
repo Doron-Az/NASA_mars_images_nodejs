@@ -1,28 +1,17 @@
-const registerController = require('../Controllers/register');
+'use strict';
 var express = require('express');
-const Cookies = require("cookies");
-const { sequelize } = require('../models');
 var router = express.Router();
-
-const keys = ['keyboard cat']
-
-
-router.get('/', function(req, res) {
-    if (req.session.isConnected)
-        res.redirect('/');
-
-    res.render('register', { pageTitle: "NASA Sign Up", scriptPath: "javaScript/register.js", error_msg: "" });
-});
-
-router.post('/', function(req, res) {
-    res.redirect('register');
-});
+const registerController = require('../Controllers/register');
+const middleWare = require('../Controllers/middleWare');
 
 
-router.post('/result', registerController.addUserToDataBase);
+router.get('/', registerController.getRegister);
+router.post('/', (req, res) => { res.redirect('/register'); });
 
-router.get('/result', function(req, res) {
-    res.redirect('/');
-});
+router.get('/result', (req, res) => { res.redirect('/'); });
+router.post('/result', [middleWare.checkTimerCookie, middleWare.valitadeRgester], registerController.addUserToDataBase);
+
+router.get('/timeout', (req, res) => { res.redirect('/'); });
+router.post('/timeout', registerController.postTimeOut);
 
 module.exports = router;

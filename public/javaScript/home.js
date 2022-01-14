@@ -34,7 +34,7 @@ let marsImagesBrowser = (() => {
 /**
  * Input validation module.
  */
-const validatorModule = (function() {
+const validatorModule = (function () {
     //global const error message
     const MSG_NOT_DATE = 'Text must contain earth date (YYYY-MM-DD) or SOL number';
     const MSG_EMPTY_INPUT = 'Input is required here';
@@ -44,7 +44,7 @@ const validatorModule = (function() {
      * @param str - The string to validate
      * @returns {{isValid: boolean, message: string}} - a boolean and message in case validate failed
      */
-    const isNotEmpty = function(str) {
+    const isNotEmpty = function (str) {
         return {
             isValid: (str.length !== 0),
             message: MSG_EMPTY_INPUT
@@ -56,7 +56,7 @@ const validatorModule = (function() {
      * @param str -  The string to validate
      * @returns {{isValid: *, message: string}} -  a boolean and message in case validate failed
      */
-    const isSol = function(str) {
+    const isSol = function (str) {
         return {
             isValid: (str.match(/^(\d{1,4})$/)),
             message: MSG_NOT_DATE
@@ -69,7 +69,7 @@ const validatorModule = (function() {
      * @param str - The string to validate
      * @returns {{isValid: boolean, message: string}} -  a boolean and message in case validate failed
      */
-    const isDate = function(str) {
+    const isDate = function (str) {
         let currVal = str;
         let rxDatePattern = /^(\d{4})([\-])(\d{1,2})([\/-])(\d{1,2})$/; //Declare Regex
         let dtArray = currVal.match(rxDatePattern); // is format OK?
@@ -139,7 +139,7 @@ let makerHTML = (() => {
      * @param mission - The name of the mission.
      * @returns {string} - html string insert to html page.
      */
-    publicData.makeImageCard = function(sourceImage, id, earthDate, sol, camera, mission) {
+    publicData.makeImageCard = function (sourceImage, id, earthDate, sol, camera, mission) {
         return (`
                 <div class="col m-3"">
                     <div class="card image-div" style="width:19rem;"> 
@@ -164,13 +164,13 @@ let makerHTML = (() => {
      * @param image - Image object that contain the date image.
      * @returns {string} - HTML to add to our page.
      */
-    publicData.makeToSavedListImageHTML = function(image, boolEditMode) {
+    publicData.makeToSavedListImageHTML = function (image, boolEditMode) {
 
         let editModeDNon = boolEditMode ? "" : "d-none";
 
         return `<li class="m-1"> 
                     <span class="${image.imageId} togglevisible ${editModeDNon}">
-                        <button type="button" class="btn btn-sm btn-outline-danger askDeleteBtn">X</button>
+                        <button type="button" class="trash btn btn-sm btn-outline-danger material-icons askDeleteBtn" style="font-size: 20px">delete_forever</button>
                     </span>
                     <div class="${image.imageId} visibleYN d-none">
                         <button type="button" class="btn btn-sm btn-outline-danger askDeleteBtn" id="noDeleteBtn">No</button>
@@ -189,7 +189,7 @@ let makerHTML = (() => {
      *                 and if this is not the first image, we add empty string "" to class.
      *@returns {string} - HTML carousel image to add to our page.
      */
-    publicData.makeImageCarouselHTML = function(image, active) {
+    publicData.makeImageCarouselHTML = function (image, active) {
         return `<div class="carousel-item ${active}" >
                     <img src="${image.url}" class="d-block w-100" alt="...">
                     <div class="carousel-caption d-none d-md-block">
@@ -207,7 +207,7 @@ let makerHTML = (() => {
      * @param target - The position on the page to which we want to add.
      * @param data - The string you want to addץ
      */
-    publicData.makeSelectOptionHtml = function(target, data) {
+    publicData.makeSelectOptionHtml = function (target, data) {
         document.getElementById(target).innerHTML += `<option>${data}</option>`;
     }
 
@@ -216,7 +216,7 @@ let makerHTML = (() => {
 
 
 //main function
-(function() {
+(function () {
     //our api key const
     const APIKEY = "cwVR0uFhLjChpfFNgSaVgpb7rPACcWaJggN55xma"
 
@@ -250,6 +250,19 @@ let makerHTML = (() => {
     const MSG_FAILED_LOAD_IMAGES_GALLERY = `We were unable to load the information. 
     please check the Internet connection.`;
 
+    const MSG_ABOUT = `<p>Doron Azulay</br>
+                   DoronAz@edu.hac.ac.il</p>
+
+                       <p>Liron Farzam</br>
+                  LironFa@edu.hac.ac.il</br></p>`;
+
+    const MSG_HELP = `Photo search: To access the gallery, select mission, camera and date (Date or Sol) and click the search button.
+    The search results will appear in the results area according to the parameters.
+    Once the gallery appears you can save the images you like for future use and access them at any time.
+    Clicking on the edit button will allow you to remove images from the saved image list.
+    Clicking on the carousel will activate the saved image carousel (if there are any saved ones).
+    You can read more information about the missions by clicking on them through the menu.`;
+
     //check if the api connection is ok or failed
     function status(response) {
         if (response.status >= 200 && response.status < 300) {
@@ -273,7 +286,8 @@ let makerHTML = (() => {
         fetch('https://api.nasa.gov/mars-photos/api/v1/rovers?api_key=' + APIKEY)
             .then(status)
             .then(json)
-            .then(function(data) {
+            .then(function (data) {
+
 
                 let camerasList = [];
 
@@ -284,27 +298,15 @@ let makerHTML = (() => {
 
                     makerHTML.makeSelectOptionHtml("missionInput", mission.name);
 
-                    //save the cameras of all imssions
-                    for (const j of mission.cameras) {
-                        camerasList.push(j.name);
-                    }
                 }
-                //remove the duplicates from the list
-                let temp = new Set(camerasList);
-
-                //insert the list to out html page
-                for (const i of temp) {
-                    makerHTML.makeSelectOptionHtml("cameraInput", i);
-                }
-
                 loadingBuffer.classList.add("d-none");
 
-            }).catch(function(error) {
+            }).catch(function (error) {
                 //Here we will catch the failure of the connection and handle
                 // it properly, print an error message to the user and ask to refresh the page.
                 loadingBuffer.classList.add("d-none");
                 console.log('Request failed', error);
-                viewErrorModal(MSG_FAILED_LOAD_DATA);
+                viewModal('Oops!', MSG_FAILED_LOAD_DATA);
             });
     }
 
@@ -321,7 +323,7 @@ let makerHTML = (() => {
         fetch(`https://api.nasa.gov/mars-photos/api/v1/rovers/${mission}/photos?${date}&camera=${camera}&api_key=${APIKEY}`)
             .then(status)
             .then(json)
-            .then(function(data) {
+            .then(function (data) {
 
                 noImagesFoundElem.classList.add("d-none");
                 loadingBuffer.classList.add("d-none");
@@ -347,12 +349,12 @@ let makerHTML = (() => {
                     b.addEventListener('click', addToSaveList);
                 }
 
-            }).catch(function(error) {
+            }).catch(function (error) {
                 //Here we will catch the failure of the connection and handle
                 // it properly, print an error message to the user and ask to refresh the page.
                 loadingBuffer.classList.add("d-none");
                 console.log('Request failed', error);
-                viewErrorModal(MSG_FAILED_LOAD_IMAGES_GALLERY);
+                viewModal('Oops!', MSG_FAILED_LOAD_IMAGES_GALLERY);
             });
     }
 
@@ -371,22 +373,26 @@ let makerHTML = (() => {
         loadingBuffer.classList.remove("d-none");
         fetch("/api/resources/add-image", {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ "image": imagesList[myIndex] })
-        }).then(function(response) {
-            return response.json();
-        }).then(function(data) {
+            headers: {
+                "Content-Type": "application/json",
+                "auth-token": localStorage.getItem("auth-token")
+            },
 
-            if (data)
+            body: JSON.stringify({ "image": imagesList[myIndex] })
+        }).then(function (response) {
+            return response.json();
+        }).then(function (data) {
+
+            if (data.add_new_image)
                 getListOfSavedImages();
             else
-                viewErrorModal(MSG_IMAGE_EXIST);
+                viewModal('Oops!', MSG_IMAGE_EXIST);
 
             loadingBuffer.classList.add("d-none");
 
-        }).catch(function(error) {
+        }).catch(function (error) {
             loadingBuffer.classList.add("d-none");
-            viewErrorModal(error);
+            viewModal('Oops!', error);
             console.log(error);
         });
     }
@@ -398,15 +404,15 @@ let makerHTML = (() => {
 
         fetch("/api/resources/delete-image", {
             method: "DELETE",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json",
+                "auth-token": localStorage.getItem("auth-token")
+            },
             body: JSON.stringify({ "imageId": imageId })
-        }).then(function(response) {
+        }).then(function (response) {
             return response.json();
-        }).then(function(data) {
+        }).then(function (data) {
             loadingBuffer.classList.add("d-none");
-
-            console.log(data.image_left);
-            console.log(data.isDelete);
 
             if (data.image_left === 0)
                 editSavedList();
@@ -415,9 +421,9 @@ let makerHTML = (() => {
 
             return data.isDelete;
 
-        }).catch(function(error) {
+        }).catch(function (error) {
             loadingBuffer.classList.add("d-none");
-            viewErrorModal(error);
+            viewModal('Oops!', error);
             console.log(error);
         });
     }
@@ -427,10 +433,9 @@ let makerHTML = (() => {
      * Present using the message model you receive.
      * @param text - the string we want to view on the modal.
      */
-    function viewErrorModal(text) {
-
-
+    function viewModal(title, text) {
         let modal = new bootstrap.Modal(document.getElementById("errorModal"));
+        document.getElementById("modal-title").innerHTML = title;
         document.getElementById("errorModalText").innerHTML = text;
         modal.show();
     }
@@ -469,7 +474,7 @@ let makerHTML = (() => {
     /**
      * Reset all error messages on the page.
      */
-    const resetErrors = function() {
+    const resetErrors = function () {
         document.querySelectorAll(".is-invalid").forEach((e) => e.classList.remove("is-invalid"));
         document.querySelectorAll(".errormessage").forEach((e) => e.innerHTML = "");
     }
@@ -601,19 +606,23 @@ let makerHTML = (() => {
 
         fetch("/api/resources/saved-image-list", {
             method: "GET",
-            headers: { "Content-Type": "application/json" },
-        }).then(function(response) {
+            headers: {
+                "Content-Type": "application/json",
+                "auth-token": localStorage.getItem("auth-token")
+            },
+
+        }).then(function (response) {
             return response.json();
-        }).then(function(data) {
+        }).then(function (data) {
 
             setListOfSavedImages(data);
             loadingBuffer.classList.add("d-none");
 
             return data;
 
-        }).catch(function(error) {
+        }).catch(function (error) {
             loadingBuffer.classList.add("d-none");
-            viewErrorModal(error);
+            viewModal('Oops!', error);
             console.log(error);
         });
     }
@@ -651,35 +660,36 @@ let makerHTML = (() => {
 
     }
 
-
-
     function deleteSavedListImages() {
 
         loadingBuffer.classList.remove("d-none");
 
         fetch("/api/resources/delete-all-image-list", {
             method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-        }).then(function(response) {
+            headers: {
+                "Content-Type": "application/json",
+                "auth-token": localStorage.getItem("auth-token")
+            },
+        }).then(function (response) {
             return response.json();
-        }).then(() => {
-
-            editSavedList();
-            setListOfSavedImages([]);
-
+        }).then((data) => {
+            if (data.deleted_all_images) {
+                editSavedList();
+                setListOfSavedImages([]);
+            }
+            else
+                viewModal('Oops!', "Something went wrong, we were unable to delete your list \n Please try again")
             loadingBuffer.classList.add("d-none");
 
-        }).catch(function(error) {
+        }).catch(function (error) {
             loadingBuffer.classList.add("d-none");
-            viewErrorModal(error);
+            viewModal('Oops!', error);
             console.log(error);
         });
 
     }
 
     function CustomizeButton(e, strA, strB) {
-
-        console.log(e.innerHTML);
 
         if (isEmpyCarousel !== "active") {
             if (e.innerHTML === strA) {
@@ -691,7 +701,7 @@ let makerHTML = (() => {
             e.classList.toggle('btn-outline-secondary');
             return true;
         } else {
-            viewErrorModal("Saved list is emppty")
+            viewModal('Oops!', "Saved list is emppty")
             return false;
         }
 
@@ -747,13 +757,24 @@ let makerHTML = (() => {
 
     }
 
+    let setCamerasChoose = () => {
+        const missionName = document.getElementById("missionInput").value;
+        document.getElementById("cameraInput").innerHTML = "";
 
-    document.addEventListener('DOMContentLoaded', async function() {
+        for(let mission of missionsList){
+            if(mission.name == missionName){
+                for(let camera of mission.cameras){
+                    makerHTML.makeSelectOptionHtml("cameraInput",camera.name );
+                }
+            }
+        } 
+    }
+
+    document.addEventListener('DOMContentLoaded', async function () {
 
         setGlobalVariables()
         getDataOfMissions();
         getListOfSavedImages();
-
 
 
         document.getElementById("confirmLogOut").addEventListener('click', () => {
@@ -767,5 +788,11 @@ let makerHTML = (() => {
         document.getElementById("logoutBtn").addEventListener('click', disconnectUser)
         document.getElementById("confirmDeleteSavedList").addEventListener("click", deleteSavedListImages);
         document.getElementById("clearAllBtn").addEventListener("click", deleteAllSavedImageListModal);
+        document.getElementById("helpBtn").addEventListener("click", () => { viewModal('Help', MSG_HELP); });
+        document.getElementById("aboutBtn").addEventListener("click", () => { viewModal('Who we are?', MSG_ABOUT); });
+        document.getElementById("missionInput").addEventListener('change', setCamerasChoose);
+
+
+
     });
 })();

@@ -1,11 +1,13 @@
 <%- include('includes/head.ejs') %>
 
+
     <div class="container-fluid">
 
+
+
+        <form id="homePageForm" type="hidden" action="/" method="post"></form>
+
         <div id="loadingBuffering" class="d-none"></div>
-        <input type="hidden" id="errorMsgEmail" name="errorMsgEmail" value="<%=error_msg_email%>">
-        <input type="hidden" id="errorMsgPassword" name="errorMsgPassword" value="<%=error_msg_password %>">
-        <input type="hidden" id="emailHidden" name="emailHidden" value="<%=email_hidden%>">
 
         <div class="row m-3" id="test">
             <div class="col-md-3 col-lg-4"></div>
@@ -14,37 +16,67 @@
                 <div class="card">
                     <img src="../images/nasa-logo.gif" class="card-img-top" alt="...">
                     <div class="card-body">
-                        <h5><b>Please Login or sign up</b></h5>
+                        <h5 class="text-center"><b>Please Login or sign up</b></h5>
                         <form id="loginForm" action="/login" method="post">
+
+                            <label for="emailInput">Email address</label>
                             <div class="form-group">
-                                <label for="emailInput">Email address</label>
-                                <input class="form-control" id="emailInput" name="emailInput" aria-describedby="emailHelp" placeholder="Enter email">
-                                <div class="text-danger errormessage"></div>
-                            </div>
-                            <div class="form-group">
-                                <label for="passwordInput">Password</label>
-                                <input type="password" class="form-control" id="passwordInput" name="passwordInput" placeholder="Password">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <span class="material-icons">local_post_office</span>
+                                        </span>
+                                    </div>
+                                    <input type="text" id="emailInput" name="emailInput" class="form-control" placeholder="example@email.com">
+                                </div>
                                 <div class="text-danger errormessage"></div>
                             </div>
 
-                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                <button id="loginBtb" name="loginBtb" type="submit" class="btn btn-primary m-2">Login</button>
+                            <label for="emailInput">Password</label>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <span class="material-icons">vpn_key</span>
+                                        </span>
+                                    </div>
+                                    <input type="password" id="passwordInput" name="passwordInput" class="form-control" placeholder="Password">
+                                </div>
+                                <div class="text-danger errormessage"></div>
+                            </div>
+
+                            <div class="text-center">
+                                <button id="loginBtb" name="loginBtb" type="submit" class="btn btn-primary m-3">Login</button>
                             </div>
 
                         </form>
-
-                        <form id="signUpForm" method="post" action="/register">
+                        <div>
                             <p class="text-center">Don't have an account?
-                                <button type="submit" formaction="/register" class="text-primary btn btn-light">Sign
-                                    Up
-                                </button>
-                            </p>
-                        </form>
+                                <a href="/register">Sign Up</a>
 
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-3 col-lg-4"></div>
+        </div>
+        <!--custom modal-->
+        <div class="modal" tabindex="-1" id="errorModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Oops!</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="errorModalText"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
