@@ -288,16 +288,12 @@ let makerHTML = (() => {
             .then(json)
             .then(function (data) {
 
-
-                let camerasList = [];
-
                 //save the missions' data on list.
                 for (const mission of data.rovers) {
                     missionsList.push(new marsImagesBrowser.Mission(mission.name, mission.landing_date,
                         mission.max_date, mission.max_sol, mission.cameras));
 
                     makerHTML.makeSelectOptionHtml("missionInput", mission.name);
-
                 }
                 loadingBuffer.classList.add("d-none");
 
@@ -309,7 +305,6 @@ let makerHTML = (() => {
                 viewModal('Oops!', MSG_FAILED_LOAD_DATA);
             });
     }
-
 
     /**
      * Contact NASA's API and request the images available with the user's date, camera and task.
@@ -390,7 +385,7 @@ let makerHTML = (() => {
                     viewModal('Oops!', MSG_IMAGE_EXIST);
             }
             else
-            window.location = "/login";
+                window.location = "/login";
 
             loadingBuffer.classList.add("d-none");
 
@@ -629,7 +624,7 @@ let makerHTML = (() => {
             if (data.access)
                 setListOfSavedImages(data.image_list);
             else
-            window.location = "/login";
+                window.location = "/login";
 
             return data;
 
@@ -696,7 +691,7 @@ let makerHTML = (() => {
                     viewModal('Oops!', "Something went wrong, we were unable to delete your list \n Please try again")
             }
             else
-            window.location = "/login";
+                window.location = "/login";
 
             loadingBuffer.classList.add("d-none");
 
@@ -723,7 +718,6 @@ let makerHTML = (() => {
             viewModal('Oops!', "Saved list is emppty")
             return false;
         }
-
     }
 
     function slideShowCarousel() {
@@ -751,19 +745,14 @@ let makerHTML = (() => {
             //the Yes No buttons
 
             if (document.getElementById("editBtn").innerHTML === 'Edit Mode') {
-
-
                 for (let i of listYN)
                     i.classList.add("d-none");
-
                 for (let i of listX)
                     i.classList.remove("d-none");
             }
 
-
             for (let i of listX)
                 i.classList.toggle("d-none");
-
         }
         return true;
     }
@@ -795,7 +784,6 @@ let makerHTML = (() => {
         getDataOfMissions();
         getListOfSavedImages();
 
-
         document.getElementById("confirmLogOut").addEventListener('click', () => {
             document.getElementById("homePageForm").submit();
         })
@@ -810,8 +798,6 @@ let makerHTML = (() => {
         document.getElementById("helpBtn").addEventListener("click", () => { viewModal('Help', MSG_HELP); });
         document.getElementById("aboutBtn").addEventListener("click", () => { viewModal('Who we are?', MSG_ABOUT); });
         document.getElementById("missionInput").addEventListener('change', setCamerasChoose);
-
-
 
     });
 })();

@@ -1,7 +1,5 @@
 var express = require('express');
-const middleWare = require('../Controllers/middleWare');
 var router = express.Router();
-const dbModels = require("../models"); //contain the User model
 const homePageController = require('../Controllers/home');
 
 

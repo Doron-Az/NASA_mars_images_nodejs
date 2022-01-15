@@ -1,6 +1,11 @@
 "use strict";
 
-(function() {
+(function () {
+
+    let emailInputElement = null;
+    let passwordInputElement = null;
+    let loadingBufferElement = null;
+
     function viewErrorModal(text) {
         let modal = new bootstrap.Modal(document.getElementById("errorModal"));
         document.getElementById("errorModalText").innerHTML = text;
@@ -34,56 +39,54 @@
 
         return valid;
     }
+    let checkLogin = (event) => {
+        event.preventDefault();
 
+        if (isNotEmpty([emailInputElement, passwordInputElement])) {
 
-    document.addEventListener('DOMContentLoaded', function() {
+            loadingBufferElement.classList.remove("d-none");
+            fetch("/api/verify-user", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    "email": emailInputElement.value.trim().toLowerCase(),
+                    "password": passwordInputElement.value
+                })
+            }).then(status)
+                .then(function (response) {
+                    return response.json();
+                }).then((data) => {
 
-        const emailInputElement = document.getElementById("emailInput");
-        const passwordInputElement = document.getElementById("passwordInput");
-        const loadingBufferElement = document.querySelector("#loadingBuffering");
+                    loadingBufferElement.classList.add("d-none");
+                    if (data.verify) {
+                        localStorage.setItem("auth-token", data.token);
+                        document.getElementById("homePageForm").submit();
 
+                    } else {
+                        !data.verifyEmail ? setErrorMsg(emailInputElement, "") :
+                            setErrorMsg(emailInputElement, data.verifyEmail);
 
-        document.getElementById("loginForm").addEventListener("submit", async(event) => {
+                        !data.verifyPassword ? setErrorMsg(passwordInputElement, "") :
+                            setErrorMsg(passwordInputElement, data.verifyPassword);
+                    }
 
-            event.preventDefault();
+                }).catch(function (error) {
+                    //Here we will catch the failure of the connection and handle
+                    // it properly, print an error message to the user and ask to refresh the page.
+                    // loadingBufferingElement.classList.remove("d-none");
+                    console.log('Request failed', error);
+                    viewErrorModal("Somthing Worong, please try again");
+                });
+        }
+    }
 
-            if (isNotEmpty([emailInputElement, passwordInputElement])) {
+    document.addEventListener('DOMContentLoaded', function () {
 
-                loadingBufferElement.classList.remove("d-none");
-                await fetch("/api/verify-user", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            "email": emailInputElement.value.trim().toLowerCase(),
-                            "password": passwordInputElement.value
-                        })
-                    }).then(status)
-                    .then(function(response) {
-                        return response.json();
-                    }).then((data) => {
+        emailInputElement = document.getElementById("emailInput");
+        passwordInputElement = document.getElementById("passwordInput");
+        loadingBufferElement = document.querySelector("#loadingBuffering");
 
-                        loadingBufferElement.classList.add("d-none");
-                        if (data.verify) {
-                            localStorage.setItem("auth-token", data.token);
-                            document.getElementById("homePageForm").submit();
+        document.getElementById("loginForm").addEventListener("submit", checkLogin);
 
-                        } else {
-                            !data.verifyEmail ? setErrorMsg(emailInputElement, "") :
-                                setErrorMsg(emailInputElement, data.verifyEmail);
-
-                            !data.verifyPassword ? setErrorMsg(passwordInputElement, "") :
-                                setErrorMsg(passwordInputElement, data.verifyPassword);
-
-                        }
-                        
-                    }).catch(function(error) {
-                        //Here we will catch the failure of the connection and handle
-                        // it properly, print an error message to the user and ask to refresh the page.
-                        // loadingBufferingElement.classList.remove("d-none");
-                        console.log('Request failed', error);
-                        viewErrorModal("Somthing Worong, please try again");
-                    });
-            }
-        });
     });
-})();
+});

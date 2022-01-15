@@ -16,8 +16,10 @@
                 <div class="card">
                     <img src="../images/nasa-logo.gif" class="card-img-top" alt="...">
                     <div class="card-body">
-                        <h5 class="text-center"><b>Please Login or sign up</b></h5>
-                        <div class="text-danger text-center" id="noLongerAccess"><%=error_msg_to_user%></div>
+                        <h5 class="text-center"><b>Please Login or Sign Up</b></h5>
+                        <div class="text-danger text-center" id="noLongerAccess">
+                            <%=error_msg_to_user%>
+                        </div>
                         <form id="loginForm" action="/login" method="post">
 
                             <label for="emailInput">Email address</label>
@@ -28,7 +30,8 @@
                                             <span class="material-icons">local_post_office</span>
                                         </span>
                                     </div>
-                                    <input type="text" id="emailInput" name="emailInput" class="form-control" placeholder="example@email.com">
+                                    <input type="text" id="emailInput" name="emailInput" class="form-control"
+                                        placeholder="example@email.com">
                                 </div>
                                 <div class="text-danger errormessage"></div>
                             </div>
@@ -41,13 +44,15 @@
                                             <span class="material-icons">vpn_key</span>
                                         </span>
                                     </div>
-                                    <input type="password" id="passwordInput" name="passwordInput" class="form-control" placeholder="Password">
+                                    <input type="password" id="passwordInput" name="passwordInput" class="form-control"
+                                        placeholder="Password">
                                 </div>
                                 <div class="text-danger errormessage"></div>
                             </div>
 
                             <div class="text-center">
-                                <button id="loginBtb" name="loginBtb" type="submit" class="btn btn-primary m-3">Login</button>
+                                <button id="loginBtb" name="loginBtb" type="submit"
+                                    class="btn btn-primary m-3">Login</button>
                             </div>
 
                         </form>

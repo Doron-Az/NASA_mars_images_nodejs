@@ -1,36 +1,36 @@
-const validatorModule = (function() {
-    const isNotEmpty = function(str) {
+const validatorModule = (function () {
+    const isNotEmpty = function (str) {
         return {
             isValid: (str.length !== 0),
             message: 'Please fill out this field'
         };
     }
 
-    const hasLetter = function(str) {
+    const hasLetter = function (str) {
         return {
             isValid: (/^[a-zA-Z]+$/.test(str)),
             message: 'Please enter only alphabetic letters'
         }
     }
-    const isEmail = function(str) {
+    const isEmail = function (str) {
         return {
             isValid: (/\S+@\S+\.\S+/.test(str)),
             message: 'Please enter the correct Email format'
         }
     }
-    const isBiggerThan = function(str) {
+    const isBiggerThan = function (str) {
         return {
             isValid: (str.length > 7),
             message: "Please enter at least 8 characters"
         }
     }
-    const isEqual = function(strA, strB) {
+    const isEqual = function (strA, strB) {
         return {
             isValid: (strA === strB),
             message: "The password confirmation does not match"
         }
     }
-    const isExist = function(email) {
+    const isExist = function (email) {
         return {
             isValid: false,
             message: "a user with this email adress already exists"
@@ -46,13 +46,14 @@ const validatorModule = (function() {
     }
 })();
 
-(function() {
+(function () {
 
     let emailInputElem = null;
     let firstNameInputElem = null;
     let lastNameInputElem = null;
     let passwordInputElem = null;
     let confirmPasswordInputElem = null;
+    let loadingBufferingElem = null;
 
     function setCookie(cname, cvalue) {
         const d = new Date();
@@ -149,7 +150,7 @@ const validatorModule = (function() {
     function startTimer(duration, display) {
         var timer = duration,
             minutes, seconds;
-        setInterval(function() {
+        setInterval(function () {
             minutes = parseInt(timer / 60, 10);
             seconds = parseInt(timer % 60, 10);
 
@@ -164,53 +165,59 @@ const validatorModule = (function() {
         }, 1000);
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
+    let registerFirstPart = () => {
+
+        loadingBufferingElem.classList.remove('d-none');
+
+        fetch("/api/is-valid-email", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ "email": emailInputElem.value.trim() })
+        }).then(function (response) {
+            return response.json();
+        }).then(function (data) {
+
+            if (validateFirstRegisterInput(firstNameInputElem, lastNameInputElem, emailInputElem, data.email_exist)) {
+                var oneMinutes = 60 * 1,
+                    display = document.querySelector('#time');
+                startTimer(oneMinutes, display);
+
+                setCookie("registerTimer", "");
+                document.getElementById("registerForm").classList.add('d-none');
+                document.getElementById("passwordDiv").classList.remove('d-none');
+
+                setTimeout((() => { document.getElementById("timeOutForm").submit(); }), (60 + 1) * 1000);
+            }
+            loadingBufferingElem.classList.add('d-none');
+
+        }).catch(function (error) {
+            loadingBufferingElem.classList.add('d-none');
+            viewErrorModal(error);
+            console.log(error);
+        });
+    }
+
+    let registerSecondPart = (event) => {
+
+        event.preventDefault();
+
+        if (validationPasswordsInput(passwordInputElem, confirmPasswordInputElem)) {
+            delete_cookie("registerTimer");
+            document.getElementById("passwordForm").submit();
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
 
         emailInputElem = document.getElementById("emailInput");
         firstNameInputElem = document.getElementById("firstNameInput");
         lastNameInputElem = document.getElementById("lastNameInput");
         passwordInputElem = document.getElementById("passwordInput");
         confirmPasswordInputElem = document.getElementById("confirmPasswordInput");
+        loadingBufferingElem = document.querySelector("#loadingBuffering");
 
-        document.getElementById("registerFirstPart").addEventListener("click", () => {
-            document.querySelector("#loadingBuffering").classList.remove('d-none');
-            fetch("/api/is-valid-email", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ "email": emailInputElem.value.trim() })
-            }).then(function(response) {
-                return response.json();
-            }).then(function(data) {
-
-                if (validateFirstRegisterInput(firstNameInputElem, lastNameInputElem, emailInputElem, data.email_exist)) {
-                    var oneMinutes = 60 * 1,
-                        display = document.querySelector('#time');
-                    startTimer(oneMinutes, display);
-
-                    setCookie("registerTimer", "");
-                    document.getElementById("registerForm").classList.add('d-none');
-                    document.getElementById("passwordDiv").classList.remove('d-none');
-
-                    setTimeout((() => { document.getElementById("timeOutForm").submit(); }), (60 + 1) * 1000);
-                }
-                document.querySelector("#loadingBuffering").classList.add('d-none');
-
-            }).catch(function(error) {
-                document.querySelector("#loadingBuffering").classList.add('d-none');
-                viewErrorModal(error);
-                console.log(error);
-            });
-
-        });
-        document.getElementById("passwordForm").addEventListener("submit", (event) => {
-
-            event.preventDefault();
-
-            if (validationPasswordsInput(passwordInputElem, confirmPasswordInputElem)) {
-                delete_cookie("registerTimer");
-                document.getElementById("passwordForm").submit();
-            }
-        });
+        document.getElementById("registerFirstPart").addEventListener("click", registerFirstPart);
+        document.getElementById("passwordForm").addEventListener("submit", registerSecondPart);
 
     });
 })();
