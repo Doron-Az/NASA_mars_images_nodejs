@@ -8,9 +8,9 @@ exports.isValidEmail = (req, res) => {
     return dbModels.User.findOne({ where: { email: req.body.email } })
         .then((user) => {
             if (user)
-                res.send({ email_exist: true });
+                res.send({email_exist: true });
             else
-                res.send({ email_exist: false });
+                res.send({email_exist: false });
         })
         .catch((err) => {
             res.status(400).send(err)
@@ -37,7 +37,7 @@ exports.addImage = (req, res) => {
                 res.send({"add_new_image": false});
         })
         .then((crateResult) => {
-            res.send({ "add_new_image": crateResult });
+            res.send({access: true , "add_new_image": crateResult });
         })
         .catch((err) => {
             res.status(400).send(err);
@@ -49,7 +49,7 @@ exports.deleteImage = (req, res) => {
     return dbModels.MarsImage.findOne({ where: { email: req.session.isConnected, imageId: req.body.imageId } })
         .then((image) => { image.destroy({ force: true }) })
         .then(() => { return dbModels.MarsImage.findAll({ where: { email: req.session.isConnected } }) })
-        .then((count) => { res.json({ isDelete: true, image_left: count.length }); })
+        .then((count) => { res.json({access: true , isDelete: true, image_left: count.length }); })
         //the api task return if the image deleted and how much images left at the data. 
         .catch((err) => {
             res.status(400).send(err);
@@ -59,7 +59,7 @@ exports.deleteImage = (req, res) => {
 exports.deleteAllImages = (req, res) => {
 
     return dbModels.MarsImage.destroy({ where: { email: req.session.isConnected } })
-        .then((isDeleted) => { res.send({ deleted_all_images: isDeleted }); })
+        .then((isDeleted) => { res.send({access: true , deleted_all_images: isDeleted }); })
         .catch((err) => {
             res.status(400).send(err);
         })
@@ -68,7 +68,7 @@ exports.deleteAllImages = (req, res) => {
 exports.geSavedImageList = (req, res) => {
 
     return dbModels.MarsImage.findAll({ where: { email: req.session.isConnected } })
-        .then((imageList) => { res.send(imageList); })
+        .then((imageList) => { res.send({access: true ,image_list: imageList}); })
         .catch((err) => {
             res.status(400).send(err);
         })
@@ -85,10 +85,10 @@ exports.verifyUser = (req, res) => {
                 req.session.isConnected = email;
                 const TOKEN_SECRET = "tokenSecret";
                 const token = jwt.sign({ email: email }, TOKEN_SECRET);
-                res.send({ verify: true, token: token });
+                res.send({verify: true, token: token });
             }
             else
-                res.send({ verify: false, verifyPassword: "The password you entered is incorrect" });
+                res.send({verify: false, verifyPassword: "The password you entered is incorrect" });
         })
         .catch((err) => {
             res.status(400).send(err);

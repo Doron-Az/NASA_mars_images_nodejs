@@ -1,12 +1,13 @@
 'use strict';
 const dbModels = require("../models"); //contain the User model
 const bcrypt = require("bcrypt");
+const SALT_HASH = 10;
 
 exports.addUserToDataBase = (req, res) => {
 
     const { firstNameInput, lastNameInput, emailInput, passwordInput } = req.body;
 
-    return bcrypt.hash(passwordInput, 10)
+    return bcrypt.hash(passwordInput, SALT_HASH)
         .then((encryptedPassword) => {
             return dbModels.User.create({
                 firstName: firstNameInput,

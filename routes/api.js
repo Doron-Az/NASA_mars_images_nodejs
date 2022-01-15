@@ -4,13 +4,13 @@ const apiController = require('../Controllers/api');
 const middleWare = require('../Controllers/middleWare');
 
 
-router.post('/resources/is-valid-email', apiController.isValidEmail);
-router.post('/resources/verify-user', apiController.verifyUser);
+router.post('/is-valid-email', apiController.isValidEmail);
+router.post('/verify-user', apiController.verifyUser);
 
 //private api - can ask for api with TOKEN only! 
-router.put('/resources/add-image',middleWare.checkToken, apiController.addImage);
-router.get('/resources/saved-image-list',middleWare.checkToken, apiController.geSavedImageList);
-router.delete('/resources/delete-image', middleWare.checkToken, apiController.deleteImage);
-router.delete('/resources/delete-all-image-list',middleWare.checkToken, apiController.deleteAllImages);
+router.put('/add-image',middleWare.checkAccess, apiController.addImage);
+router.get('/saved-image-list',middleWare.checkAccess, apiController.geSavedImageList);
+router.delete('/delete-image',middleWare.checkAccess , apiController.deleteImage);
+router.delete('/delete-all-image-list',middleWare.checkAccess, apiController.deleteAllImages);
 
 module.exports = router;

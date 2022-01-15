@@ -2,19 +2,23 @@ const jwt = require('jsonwebtoken');
 const dbModels = require("../models"); //contain the User model
 
 
-module.exports.checkToken = (req, res, next) => {
+module.exports.checkAccess = (req, res, next) => {
 
     const token = req.header('auth-token');
-    if (!token) return res.status(401).send('Access Denied!');
+    if (!token || !req.session.isConnected) {
+        req.session.accessDenied = true;
+        return res.send({ access: false });
+    }
 
     try {
         const TOKEN_SECRET = "tokenSecret";
         const verified = jwt.verify(token, TOKEN_SECRET);
         req.user = verified;
+        req.session.accessDenied = null;
         next();
 
     } catch (err) {
-        res.status(400).send('Invalid Token');
+        res.send({ access: false });
     }
 }
 
@@ -36,8 +40,7 @@ module.exports.valitadeRgester = (req, res, next) => {
             else
                 throw "";
 
-        }).catch((msg) => {
-
+        }).catch(() => {
             res.render('myError', {
                 pageTitle: "NASA Error",
                 scriptPath: "",
@@ -63,11 +66,11 @@ module.exports.checkTimerCookie = (req, res, next) => {
 }
 
 
-module.exports.isConnected = (req, res, next) => {
+module.exports.alreadyConnected = (req, res, next) => {
 
     if (req.session.isConnected)
-        next();
+        res.redirect("/");
     else
-        res.redirect('login');
+        next();
 }
 

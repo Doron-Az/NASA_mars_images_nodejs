@@ -43,6 +43,10 @@ body {
     width: 40%;
 }
 
+#astronautSuccessImage{
+    width: 60%;
+}
+
 #marsBanner {
     background: url(../images/mars-banner.jpg);
     color: white;
@@ -67,3 +71,4 @@ body {
    .capitalize{
        text-transform: capitalize;
    }
+ 

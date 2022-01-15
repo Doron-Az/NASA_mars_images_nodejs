@@ -50,7 +50,7 @@
             if (isNotEmpty([emailInputElement, passwordInputElement])) {
 
                 loadingBufferElement.classList.remove("d-none");
-                await fetch("/api/resources/verify-user", {
+                await fetch("/api/verify-user", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({

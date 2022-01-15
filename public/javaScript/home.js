@@ -371,7 +371,7 @@ let makerHTML = (() => {
         //add fetch not exist image saved
 
         loadingBuffer.classList.remove("d-none");
-        fetch("/api/resources/add-image", {
+        fetch("/api/add-image", {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -383,10 +383,14 @@ let makerHTML = (() => {
             return response.json();
         }).then(function (data) {
 
-            if (data.add_new_image)
-                getListOfSavedImages();
+            if (data.access) {
+                if (data.add_new_image)
+                    getListOfSavedImages();
+                else
+                    viewModal('Oops!', MSG_IMAGE_EXIST);
+            }
             else
-                viewModal('Oops!', MSG_IMAGE_EXIST);
+            window.location = "/login";
 
             loadingBuffer.classList.add("d-none");
 
@@ -402,7 +406,7 @@ let makerHTML = (() => {
         const imageId = this.parentElement.getAttribute('class').replace(/\D/g, '');
         loadingBuffer.classList.remove("d-none");
 
-        fetch("/api/resources/delete-image", {
+        fetch("/api/delete-image", {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
@@ -412,10 +416,15 @@ let makerHTML = (() => {
         }).then(function (response) {
             return response.json();
         }).then(function (data) {
+
             loadingBuffer.classList.add("d-none");
 
-            if (data.image_left === 0)
-                editSavedList();
+            if (data.access) {
+                if (data.image_left === 0)
+                    editSavedList();
+            }
+            else
+                window.location = "/login";
 
             getListOfSavedImages();
 
@@ -604,7 +613,7 @@ let makerHTML = (() => {
 
         loadingBuffer.classList.remove("d-none");
 
-        fetch("/api/resources/saved-image-list", {
+        fetch("/api/saved-image-list", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -615,8 +624,12 @@ let makerHTML = (() => {
             return response.json();
         }).then(function (data) {
 
-            setListOfSavedImages(data);
             loadingBuffer.classList.add("d-none");
+
+            if (data.access)
+                setListOfSavedImages(data.image_list);
+            else
+            window.location = "/login";
 
             return data;
 
@@ -664,7 +677,7 @@ let makerHTML = (() => {
 
         loadingBuffer.classList.remove("d-none");
 
-        fetch("/api/resources/delete-all-image-list", {
+        fetch("/api/delete-all-image-list", {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
@@ -673,12 +686,18 @@ let makerHTML = (() => {
         }).then(function (response) {
             return response.json();
         }).then((data) => {
-            if (data.deleted_all_images) {
-                editSavedList();
-                setListOfSavedImages([]);
+            if (data.access) {
+
+                if (data.deleted_all_images) {
+                    editSavedList();
+                    setListOfSavedImages([]);
+                }
+                else
+                    viewModal('Oops!', "Something went wrong, we were unable to delete your list \n Please try again")
             }
             else
-                viewModal('Oops!', "Something went wrong, we were unable to delete your list \n Please try again")
+            window.location = "/login";
+
             loadingBuffer.classList.add("d-none");
 
         }).catch(function (error) {
@@ -761,13 +780,13 @@ let makerHTML = (() => {
         const missionName = document.getElementById("missionInput").value;
         document.getElementById("cameraInput").innerHTML = "";
 
-        for(let mission of missionsList){
-            if(mission.name == missionName){
-                for(let camera of mission.cameras){
-                    makerHTML.makeSelectOptionHtml("cameraInput",camera.name );
+        for (let mission of missionsList) {
+            if (mission.name == missionName) {
+                for (let camera of mission.cameras) {
+                    makerHTML.makeSelectOptionHtml("cameraInput", camera.name);
                 }
             }
-        } 
+        }
     }
 
     document.addEventListener('DOMContentLoaded', async function () {

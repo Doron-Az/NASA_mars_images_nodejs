@@ -17,6 +17,7 @@
                     <img src="../images/nasa-logo.gif" class="card-img-top" alt="...">
                     <div class="card-body">
                         <h5 class="text-center"><b>Please Login or sign up</b></h5>
+                        <div class="text-danger text-center" id="noLongerAccess"><%=error_msg_to_user%></div>
                         <form id="loginForm" action="/login" method="post">
 
                             <label for="emailInput">Email address</label>

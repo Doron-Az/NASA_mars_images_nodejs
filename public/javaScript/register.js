@@ -174,7 +174,7 @@ const validatorModule = (function() {
 
         document.getElementById("registerFirstPart").addEventListener("click", () => {
             document.querySelector("#loadingBuffering").classList.remove('d-none');
-            fetch("/api/resources/is-valid-email", {
+            fetch("/api/is-valid-email", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ "email": emailInputElem.value.trim() })

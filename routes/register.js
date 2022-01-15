@@ -5,7 +5,7 @@ const registerController = require('../Controllers/register');
 const middleWare = require('../Controllers/middleWare');
 
 
-router.get('/', registerController.getRegister);
+router.get('/', middleWare.alreadyConnected ,registerController.getRegister);
 router.post('/', (req, res) => { res.redirect('/register'); });
 
 router.get('/result', (req, res) => { res.redirect('/'); });

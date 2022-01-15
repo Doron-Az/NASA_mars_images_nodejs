@@ -6,7 +6,7 @@ const homePageController = require('../Controllers/home');
 
 
 /* GET home page. */
-router.get('/', middleWare.isConnected, homePageController.getHome);
+router.get('/', homePageController.getHome);
 router.post('/', (req, res) => { res.redirect('/'); });
 
 router.get('/logout', (req, res) => { res.redirect('/'); });
