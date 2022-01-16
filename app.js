@@ -3,11 +3,6 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var http = require('http')
-var Cookies = require('cookies')
-var fs = require('fs')
-const bcrypt = require("bcrypt");
-
 
 var loginRouter = require('./routes/login');
 var registerRouter = require('./routes/register');
@@ -16,7 +11,6 @@ var homeRouter = require('./routes/home')
 
 var app = express();
 
-//************************ */
 var Sequelize = require("sequelize");
 var session = require('express-session');
 var SequelizeStore = require("connect-session-sequelize")(session.Store);
@@ -41,7 +35,6 @@ app.use(
 );
 
 myStore.sync();
-//*************************/
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

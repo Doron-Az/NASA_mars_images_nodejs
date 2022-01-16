@@ -258,6 +258,7 @@ const validatorModule = (function () {
 
         if (validationPasswordsInput(passwordInputElem, confirmPasswordInputElem)) {
             delete_cookie("registerTimer");
+
             document.getElementById("passwordForm").submit();
         }
     }
@@ -271,8 +272,16 @@ const validatorModule = (function () {
         confirmPasswordInputElem = document.getElementById("confirmPasswordInput");
         loadingBufferingElem = document.querySelector("#loadingBuffering");
 
+       //if the client try back to password page, after he finished the register, the page will refresh
+        window.addEventListener("pageshow", () => {
+            if(emailInputElem.value.trim() != "")
+                window.location.href = "/register";
+          });
+
+
         document.getElementById("registerFirstPart").addEventListener("click", registerFirstPart);
         document.getElementById("passwordForm").addEventListener("submit", registerSecondPart);
 
     });
 })();
+

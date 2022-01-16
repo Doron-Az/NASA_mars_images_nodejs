@@ -49,11 +49,8 @@ module.exports.valitadeRgester = (req, res, next) => {
                 throw "";
 
         }).catch(() => {
-            res.render('myError', {
-                pageTitle: "NASA Error",
-                scriptPath: "",
-                message: 'Sorry we could not register you Please try again'
-            })
+            req.session.set_error = true;
+            res.redirect("/register/fail");
         });
 
 
@@ -66,12 +63,10 @@ module.exports.checkTimerCookie = (req, res, next) => {
 
     const { cookies } = req;
 
-    if (!('registerTimer' in cookies))
-        return res.render('myError', {
-            pageTitle: "NASA Error",
-            scriptPath: "",
-            message: "Too late, hurry up next time"
-        });
+    if (!('registerTimer' in cookies)) {
+        req.session.set_error = true;
+        res.redirect("/register/fail");
+    }
     else
         next();
 }

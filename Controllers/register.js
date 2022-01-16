@@ -21,22 +21,17 @@ exports.addUserToDataBase = (req, res) => {
             })
 
         }).then((isRegister) => {
-            if (isRegister)
-                res.render('success', {
-                    pageTitle: "NASA Success",
-                    scriptPath: "",
-                    user_name: firstNameInput + " " + lastNameInput
-                });
+            if (isRegister) {
+                req.session.user_name = firstNameInput + " " + lastNameInput;
+                res.redirect("/register/succsess");
+            }
 
             else
                 throw "";
 
         }).catch(() => {
-            res.render('myError', {
-                pageTitle: "NASA Error",
-                scriptPath: "",
-                message: "Sorry, registration failed Please try again."
-            });
+            req.session.set_error = true;
+            redirect("/register/fail");
         })
 }
 
@@ -44,7 +39,7 @@ exports.getRegister = (req, res) => {
     //if user already connected - move to homepage
     if (req.session.isConnected)
         res.redirect('/');
-    
+
     res.render('register', {
         pageTitle: "NASA Sign Up",
         scriptPath: "javaScript/register.js",
@@ -61,4 +56,35 @@ exports.postTimeOut = (req, res) => {
     });
 }
 
+
+exports.getSuccess = (req, res) => {
+
+    if (req.session.user_name) {
+        const userName = req.session.user_name;
+        req.session.user_name = null;
+
+        res.render('success', {
+            pageTitle: "NASA Success",
+            scriptPath: "",
+            user_name: userName
+        });
+    }
+    else {
+        res.redirect('/');
+    }
+}
+
+exports.getFail = (req, res) => {
+        
+    if (req.session.set_error) {
+        req.session.set_error = null;
+        res.render('myError', {
+            pageTitle: "NASA Error",
+            scriptPath: "",
+            message: "Sorry, registration failed Please try again."
+        });
+    }
+    else
+        res.redirect('/');
+}
 
