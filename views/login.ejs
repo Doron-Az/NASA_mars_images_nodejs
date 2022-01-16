@@ -1,16 +1,12 @@
 <%- include('includes/head.ejs') %>
 
-
     <div class="container-fluid">
-
-
-
-        <form id="homePageForm" type="hidden" action="/" method="post"></form>
 
         <div id="loadingBuffering" class="d-none"></div>
 
         <div class="row m-3" id="test">
             <div class="col-md-3 col-lg-4"></div>
+
             <div class="col-12 col-md-6 col-lg-4">
 
                 <div class="card">
@@ -20,8 +16,8 @@
                         <div class="text-danger text-center" id="noLongerAccess">
                             <%=error_msg_to_user%>
                         </div>
-                        <form id="loginForm" action="/login" method="post">
 
+                        <form id="loginForm" action="/" method="post">
                             <label for="emailInput">Email address</label>
                             <div class="form-group">
                                 <div class="input-group">
@@ -54,17 +50,19 @@
                                 <button id="loginBtb" name="loginBtb" type="submit"
                                     class="btn btn-primary m-3">Login</button>
                             </div>
-
                         </form>
+
                         <div>
                             <p class="text-center">Don't have an account?
                                 <a href="/register">Sign Up</a>
 
                             </p>
                         </div>
+
                     </div>
                 </div>
             </div>
+
             <div class="col-md-3 col-lg-4"></div>
         </div>
         <!--custom modal-->

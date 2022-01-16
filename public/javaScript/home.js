@@ -263,6 +263,72 @@ let makerHTML = (() => {
     Clicking on the carousel will activate the saved image carousel (if there are any saved ones).
     You can read more information about the missions by clicking on them through the menu.`;
 
+    /**
+     * Initializes the variables we use frequently, so as not to call every time for a search of the appropriate element.
+     */
+    function setGlobalVariables() {
+        dateInput = document.getElementById("dateInput");
+        missionInput = document.getElementById("missionInput");
+        cameraInput = document.getElementById("cameraInput");
+        photoGalleryElem = document.getElementById("photosGallery");
+        savedImagesListElem = document.getElementById("savedList");
+        carouselElem = document.getElementById("imagesCarousel");
+        noImagesFoundElem = document.getElementById("noImagesFound");
+        loadingBuffer = document.querySelector("#loadingBuffering");
+    }
+
+    /**
+    * Present using the message model you receive.
+    * @param text - the string we want to view on the modal.
+    */
+    function viewModal(title, text) {
+        let modal = new bootstrap.Modal(document.getElementById("errorModal"));
+        document.getElementById("modal-title").innerHTML = title;
+        document.getElementById("errorModalText").innerHTML = text;
+        modal.show();
+    }
+    /**
+     * custom modal to ask if the user sure he want delete all saved list
+     */
+    function deleteAllSavedImageListModal() {
+        let modal = new bootstrap.Modal(document.getElementById("deleteAllSavedImageList"));
+        modal.show();
+    }
+
+    /**
+ * Validation check of the input, if there is an error we will present it in the petition where necessary.
+ * @param inputElement - Position the input in the HTML code to pull the hollow and if
+ *                      necessary display an appropriate error message.
+ * @param validateFunc - A function by which we will perform the test appropriate to the user's input.
+ * @returns {boolean|*} - Boolean that shows whether the input is correct or not.
+ */
+    const validateInput = (inputElement, validateFunc) => {
+        let errorElement = inputElement.nextElementSibling; // the error message div
+        let v = validateFunc(inputElement.value); // call the validation function
+        errorElement.innerHTML = v.isValid ? '' : v.message; // display the error message
+        v.isValid ? inputElement.classList.remove("is-invalid") : inputElement.classList.add("is-invalid");
+        return v.isValid;
+    }
+
+    /**
+     * If there is an error in a specific input, we will present a message corresponding to the error that occurred.
+     * @param inputElement - The element of the input in which the error occurred.
+     * @param message - An error message that we want to display to the user below the input box.
+     */
+    function setErrorInputMsg(inputElement, message) {
+        let errorElement = inputElement.nextElementSibling; // the error message div
+        errorElement.innerHTML = message; // display the error message
+        inputElement.classList.add("is-invalid");
+    }
+
+    /**
+     * Reset all error messages on the page.
+     */
+    const resetErrors = function () {
+        document.querySelectorAll(".is-invalid").forEach((e) => e.classList.remove("is-invalid"));
+        document.querySelectorAll(".errormessage").forEach((e) => e.innerHTML = "");
+    }
+
     //check if the api connection is ok or failed
     function status(response) {
         if (response.status >= 200 && response.status < 300) {
@@ -276,6 +342,7 @@ let makerHTML = (() => {
     function json(response) {
         return response.json();
     }
+
 
     /**
      * The function connects to NASA's API and requests the information about the missions (ID, Earth Date,
@@ -301,7 +368,6 @@ let makerHTML = (() => {
                 //Here we will catch the failure of the connection and handle
                 // it properly, print an error message to the user and ask to refresh the page.
                 loadingBuffer.classList.add("d-none");
-                console.log('Request failed', error);
                 viewModal('Oops!', MSG_FAILED_LOAD_DATA);
             });
     }
@@ -348,139 +414,8 @@ let makerHTML = (() => {
                 //Here we will catch the failure of the connection and handle
                 // it properly, print an error message to the user and ask to refresh the page.
                 loadingBuffer.classList.add("d-none");
-                console.log('Request failed', error);
                 viewModal('Oops!', MSG_FAILED_LOAD_IMAGES_GALLERY);
             });
-    }
-
-    /**
-     * Handles 'SAVE' clicks on any image card.
-     * Saves the image information in a neat list that is displayed to the user.
-     * Puts the image into an HTML page in a carousel of images, thus allowing the user to open a carousel of his saved list.
-     */
-    function addToSaveList() {
-
-        let savedButtons = document.getElementsByClassName('saveBtn');
-        let myIndex = Array.from(savedButtons).indexOf(this);
-
-        //add fetch not exist image saved
-
-        loadingBuffer.classList.remove("d-none");
-        fetch("/api/add-image", {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                "auth-token": localStorage.getItem("auth-token")
-            },
-
-            body: JSON.stringify({ "image": imagesList[myIndex] })
-        }).then(function (response) {
-            return response.json();
-        }).then(function (data) {
-
-            if (data.access) {
-                if (data.add_new_image)
-                    getListOfSavedImages();
-                else
-                    viewModal('Oops!', MSG_IMAGE_EXIST);
-            }
-            else
-                window.location = "/login";
-
-            loadingBuffer.classList.add("d-none");
-
-        }).catch(function (error) {
-            loadingBuffer.classList.add("d-none");
-            viewModal('Oops!', error);
-            console.log(error);
-        });
-    }
-
-    function deleteFromSaveList() {
-
-        const imageId = this.parentElement.getAttribute('class').replace(/\D/g, '');
-        loadingBuffer.classList.remove("d-none");
-
-        fetch("/api/delete-image", {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-                "auth-token": localStorage.getItem("auth-token")
-            },
-            body: JSON.stringify({ "imageId": imageId })
-        }).then(function (response) {
-            return response.json();
-        }).then(function (data) {
-
-            loadingBuffer.classList.add("d-none");
-
-            if (data.access) {
-                if (data.image_left === 0)
-                    editSavedList();
-            }
-            else
-                window.location = "/login";
-
-            getListOfSavedImages();
-
-            return data.isDelete;
-
-        }).catch(function (error) {
-            loadingBuffer.classList.add("d-none");
-            viewModal('Oops!', error);
-            console.log(error);
-        });
-    }
-
-
-    /**
-     * Present using the message model you receive.
-     * @param text - the string we want to view on the modal.
-     */
-    function viewModal(title, text) {
-        let modal = new bootstrap.Modal(document.getElementById("errorModal"));
-        document.getElementById("modal-title").innerHTML = title;
-        document.getElementById("errorModalText").innerHTML = text;
-        modal.show();
-    }
-
-    function deleteAllSavedImageListModal() {
-        let modal = new bootstrap.Modal(document.getElementById("deleteAllSavedImageList"));
-        modal.show();
-    }
-
-    /**
-     * Validation check of the input, if there is an error we will present it in the petition where necessary.
-     * @param inputElement - Position the input in the HTML code to pull the hollow and if
-     *                      necessary display an appropriate error message.
-     * @param validateFunc - A function by which we will perform the test appropriate to the user's input.
-     * @returns {boolean|*} - Boolean that shows whether the input is correct or not.
-     */
-    const validateInput = (inputElement, validateFunc) => {
-        let errorElement = inputElement.nextElementSibling; // the error message div
-        let v = validateFunc(inputElement.value); // call the validation function
-        errorElement.innerHTML = v.isValid ? '' : v.message; // display the error message
-        v.isValid ? inputElement.classList.remove("is-invalid") : inputElement.classList.add("is-invalid");
-        return v.isValid;
-    }
-
-    /**
-     * If there is an error in a specific input, we will present a message corresponding to the error that occurred.
-     * @param inputElement - The element of the input in which the error occurred.
-     * @param message - An error message that we want to display to the user below the input box.
-     */
-    function setErrorInputMsg(inputElement, message) {
-        let errorElement = inputElement.nextElementSibling; // the error message div
-        errorElement.innerHTML = message; // display the error message
-        inputElement.classList.add("is-invalid");
-    }
-
-    /**
-     * Reset all error messages on the page.
-     */
-    const resetErrors = function () {
-        document.querySelectorAll(".is-invalid").forEach((e) => e.classList.remove("is-invalid"));
-        document.querySelectorAll(".errormessage").forEach((e) => e.innerHTML = "");
     }
 
     /**
@@ -577,7 +512,8 @@ let makerHTML = (() => {
     }
 
     /**
-     * Resets the page data: Input lines, error messages, a list that holds the images displayed in the main gallery,
+     * Resets the page data: Input lines, error messages, 
+     * a list that holds the images displayed in the main gallery,
      * and the gallery itself.
      */
     function clearDataPage() {
@@ -590,20 +526,12 @@ let makerHTML = (() => {
         cameraInput.value = "";
     }
 
-    /**
-     * Initializes the variables we use frequently, so as not to call every time for a search of the appropriate element.
-     */
-    function setGlobalVariables() {
-        dateInput = document.getElementById("dateInput");
-        missionInput = document.getElementById("missionInput");
-        cameraInput = document.getElementById("cameraInput");
-        photoGalleryElem = document.getElementById("photosGallery");
-        savedImagesListElem = document.getElementById("savedList");
-        carouselElem = document.getElementById("imagesCarousel");
-        noImagesFoundElem = document.getElementById("noImagesFound");
-        loadingBuffer = document.querySelector("#loadingBuffering");
-    }
 
+    /**
+     * Pulls the list of customer photos using the FETCH API to the server and updates the page.
+     *      If you fail to get the list: Displays an error message to the customer to refresh the page.
+     *      If he managed to get the list: presents it to the user.
+     */
     function getListOfSavedImages() {
 
         loadingBuffer.classList.remove("d-none");
@@ -615,26 +543,30 @@ let makerHTML = (() => {
                 "auth-token": localStorage.getItem("auth-token")
             },
 
-        }).then(function (response) {
-            return response.json();
-        }).then(function (data) {
+        }).then(status)
+            .then(json)
+            .then(function (data) {
 
-            loadingBuffer.classList.add("d-none");
+                loadingBuffer.classList.add("d-none");
 
-            if (data.access)
-                setListOfSavedImages(data.image_list);
-            else
-                window.location = "/login";
+                if (data.access)
+                    setListOfSavedImages(data.image_list);
+                else
+                    window.location.href = "/login";
 
-            return data;
+                return data;
 
-        }).catch(function (error) {
-            loadingBuffer.classList.add("d-none");
-            viewModal('Oops!', error);
-            console.log(error);
-        });
+            }).catch(function (error) {
+                loadingBuffer.classList.add("d-none");
+                viewModal('Oops!', "We were unable to load the list of photos, please refresh the page");
+            });
     }
 
+    /**
+     * Receives the list of images from the server, and updates the client side.
+     * 
+     * @param {image saved list} savedList 
+     */
     function setListOfSavedImages(savedList) {
 
         savedImagesListElem.innerHTML = "";
@@ -668,6 +600,94 @@ let makerHTML = (() => {
 
     }
 
+    /**
+     * Adds an image to the saved image list.
+     * Sends FETCH API request to server to add image to list-
+     *     If able to add: Updates the list and presents to the user.
+     *               If Failed: 1. If the image exists: Displays an error message that the image is already in the list.
+     *                          2. If the server failed to add: Displays an error message that we could not add and try again.
+     */
+    function addToSaveList() {
+        let savedButtons = document.getElementsByClassName('saveBtn');
+        let myIndex = Array.from(savedButtons).indexOf(this);
+
+        loadingBuffer.classList.remove("d-none");
+        fetch("/api/add-image", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "auth-token": localStorage.getItem("auth-token")
+            },
+
+            body: JSON.stringify({ "image": imagesList[myIndex] })
+        }).then(status)
+            .then(json)
+            .then(function (data) {
+
+                if (data.access) {
+                    if (data.add_new_image)
+                        getListOfSavedImages();
+                    else
+                        viewModal('Oops!', MSG_IMAGE_EXIST);
+                }
+                else
+                    window.location.href = "/login";
+
+                loadingBuffer.classList.add("d-none");
+
+            }).catch(function (error) {
+                loadingBuffer.classList.add("d-none");
+                viewModal('Oops!', "We were unable to add the image to the list, please try again");
+            });
+    }
+
+    /**
+     * A user wants to delete an image from the list.
+     * Using the image ID, sends a FETCH API request to the server to delete the image.
+     *      If successful: The list of photos will be updated by the customer.
+     *      If Failed: An error message will be displayed to the user using Modal.
+     */
+    function deleteFromSaveList() {
+
+        const imageId = this.parentElement.getAttribute('class').replace(/\D/g, '');
+        loadingBuffer.classList.remove("d-none");
+
+        fetch("/api/delete-image", {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "auth-token": localStorage.getItem("auth-token")
+            },
+            body: JSON.stringify({ "imageId": imageId })
+        }).then(status)
+            .then(json)
+            .then(function (data) {
+
+                loadingBuffer.classList.add("d-none");
+
+                if (data.access) {
+                    if (data.image_left === 0)
+                        editSavedList();
+                }
+                else
+                    window.location.href = "/login";
+
+                getListOfSavedImages();
+
+                return data.isDelete;
+
+            }).catch(function (error) {
+                loadingBuffer.classList.add("d-none");
+                viewModal('Oops!', "We were unable to delete the image from the list, please try again");
+            });
+    }
+
+    /**
+     * Deletes the entire list of images saved to the user.
+     * Sends FETCH API request to server.
+     *      If successful: Updated and displayed to the user.
+     *      If Failed: Displays an error message using MODAL.
+     */
     function deleteSavedListImages() {
 
         loadingBuffer.classList.remove("d-none");
@@ -678,31 +698,38 @@ let makerHTML = (() => {
                 "Content-Type": "application/json",
                 "auth-token": localStorage.getItem("auth-token")
             },
-        }).then(function (response) {
-            return response.json();
-        }).then((data) => {
-            if (data.access) {
+        }).then(status)
+            .then(json)
+            .then((data) => {
+                if (data.access) {
 
-                if (data.deleted_all_images) {
-                    editSavedList();
-                    setListOfSavedImages([]);
+                    if (data.deleted_all_images) {
+                        editSavedList();
+                        setListOfSavedImages([]);
+                    }
+                    else
+                        viewModal('Oops!', "Something went wrong, we were unable to delete your list \n Please try again")
                 }
                 else
-                    viewModal('Oops!', "Something went wrong, we were unable to delete your list \n Please try again")
-            }
-            else
-                window.location = "/login";
+                    window.location.href = "/login";
 
-            loadingBuffer.classList.add("d-none");
+                loadingBuffer.classList.add("d-none");
 
-        }).catch(function (error) {
-            loadingBuffer.classList.add("d-none");
-            viewModal('Oops!', error);
-            console.log(error);
-        });
+            }).catch(function (error) {
+                loadingBuffer.classList.add("d-none");
+                viewModal('Oops!', error);
+            });
 
     }
 
+    /**
+     * Check whether to TOGGLE on the particular element,
+     *  according to the strings received by the function.
+     * @param {elemnt} e 
+     * @param {first option string on button } strA 
+     * @param {second option string on button } strB 
+     * @returns If the list is empty, returns false, otherwise true
+     */
     function CustomizeButton(e, strA, strB) {
 
         if (isEmpyCarousel !== "active") {
@@ -719,7 +746,10 @@ let makerHTML = (() => {
             return false;
         }
     }
-
+    /**
+     * Turns on the carousel of photos.
+     * If edit mode is open, close it and run a carousel.
+     */
     function slideShowCarousel() {
 
         if (!document.getElementById("clearAllBtn").classList.contains('d-none'))
@@ -729,7 +759,12 @@ let makerHTML = (() => {
             carouselElem.classList.toggle("d-none");
         }
     }
-
+    /**
+     * Enables image editing mode.
+     * Checks if the carousel mode is open - if so, closes the carousel mode.
+     * Switches between edit mode and no edit mode.
+     * @returns 
+     */
     function editSavedList() {
 
         if (!document.getElementById("imagesCarousel").classList.contains('d-none'))
@@ -754,9 +789,12 @@ let makerHTML = (() => {
             for (let i of listX)
                 i.classList.toggle("d-none");
         }
-        return true;
     }
-
+    /**
+     *ask the user if he sure want to logout from the site.
+     * if the user accept, move to POST /logout and disconnected 
+     * @param {SUBMIT form element} e 
+     */
     function disconnectUser(e) {
 
         e.preventDefault();
@@ -764,7 +802,9 @@ let makerHTML = (() => {
         modal.show();
 
     }
-
+    /**
+     * Adjust the cameras dynamically according to the task selected by the user.
+     */
     let setCamerasChoose = () => {
         const missionName = document.getElementById("missionInput").value;
         document.getElementById("cameraInput").innerHTML = "";

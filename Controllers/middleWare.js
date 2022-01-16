@@ -2,7 +2,10 @@
 const jwt = require('jsonwebtoken');
 const dbModels = require("../models"); //contain the User model
 
-
+/**
+ * middleWare to check if the user has access to perform the requested operation.
+ * @returns if the user has access or not
+ */
 module.exports.checkAccess = (req, res, next) => {
 
     const token = req.header('auth-token');
@@ -22,7 +25,11 @@ module.exports.checkAccess = (req, res, next) => {
         res.send({ access: false });
     }
 }
-
+/**
+ * If good validation - continues
+ *  Otherwise - Moves to the Error page with custom error message
+ * @returns if the validation ok or not
+ */
 module.exports.valitadeRgester = (req, res, next) => {
 
     const { firstNameInput, lastNameInput, emailInput, passwordInput } = req.body;
@@ -51,7 +58,10 @@ module.exports.valitadeRgester = (req, res, next) => {
 
 
 }
-
+/**
+ * Checks if the user has cookies for registration (there is a time limit for registration)
+ * @returns if the cookies ok or not
+ */
 module.exports.checkTimerCookie = (req, res, next) => {
 
     const { cookies } = req;
@@ -66,7 +76,9 @@ module.exports.checkTimerCookie = (req, res, next) => {
         next();
 }
 
-
+/**
+ * if the user alredy connected - move to home page
+ */
 module.exports.alreadyConnected = (req, res, next) => {
 
     if (req.session.isConnected)

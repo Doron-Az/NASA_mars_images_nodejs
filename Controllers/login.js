@@ -1,4 +1,5 @@
 'use strict';
+
 exports.getLogin = (req, res) => {
 
     //Checking if we forcibly removed the user from the site because he ran out of access.

@@ -2,16 +2,13 @@
 
 (function () {
 
+    //the global input element of the form
     let emailInputElement = null;
     let passwordInputElement = null;
     let loadingBufferElement = null;
 
-    function viewErrorModal(text) {
-        let modal = new bootstrap.Modal(document.getElementById("errorModal"));
-        document.getElementById("errorModalText").innerHTML = text;
-        modal.show();
-    }
 
+    //check if the api connection is ok or failed
     function status(response) {
         if (response.status >= 200 && response.status < 300) {
             return Promise.resolve(response)
@@ -20,12 +17,24 @@
         }
     }
 
+    /**
+     * Set an error message in a particular 
+     * element in the Bahamas for the message that the function received.
+     * If the message is empty ("") it removes an error message (if there was one before)
+     * @param {the input element} inputElement 
+     * @param {Error message display} msg 
+     */
     const setErrorMsg = (inputElement, msg) => {
         let errorElement = inputElement.parentElement.nextElementSibling;
         errorElement.innerHTML = msg; // display the error message
         msg === "" ? inputElement.classList.remove("is-invalid") : inputElement.classList.add("is-invalid");
     }
 
+    /**
+     * Check if the input is empty or not
+     * @param {input element} elemntsList 
+     * @returns if the input empty or not
+     */
     const isNotEmpty = (elemntsList) => {
 
         let valid = true;
@@ -39,11 +48,22 @@
 
         return valid;
     }
-    let checkLogin = (event) => {
-        event.preventDefault();
+
+
+    /**
+     * Captures the SUBMIT of the LOGIN form.
+     * Checking that the input is not empty -
+     *      If empty: Error message name.
+     *      If not empty: Sends Fetch API to server and 
+     * checks if the user is registered and exists -
+     *      If not: Error message.
+     *      If present: Moves to the Home Page.
+     * @param {SUBMIT form} e 
+     */
+    let checkLogin = (e) => {
+        e.preventDefault();
 
         if (isNotEmpty([emailInputElement, passwordInputElement])) {
-
             loadingBufferElement.classList.remove("d-none");
             fetch("/api/verify-user", {
                 method: "POST",
@@ -58,24 +78,24 @@
                 }).then((data) => {
 
                     loadingBufferElement.classList.add("d-none");
+
                     if (data.verify) {
                         localStorage.setItem("auth-token", data.token);
-                        document.getElementById("homePageForm").submit();
+                        document.getElementById("loginForm").submit();
 
                     } else {
+
                         !data.verifyEmail ? setErrorMsg(emailInputElement, "") :
                             setErrorMsg(emailInputElement, data.verifyEmail);
 
                         !data.verifyPassword ? setErrorMsg(passwordInputElement, "") :
-                            setErrorMsg(passwordInputElement, data.verifyPassword);
+                            (setErrorMsg(passwordInputElement, data.verifyPassword),
+                                setErrorMsg(emailInputElement, data.verifyPassword));
                     }
 
                 }).catch(function (error) {
-                    //Here we will catch the failure of the connection and handle
-                    // it properly, print an error message to the user and ask to refresh the page.
-                    // loadingBufferingElement.classList.remove("d-none");
-                    console.log('Request failed', error);
-                    viewErrorModal("Somthing Worong, please try again");
+                    loadingBufferElement.classList.add("d-none");
+                    window.location.href = "/login";
                 });
         }
     }
@@ -87,6 +107,5 @@
         loadingBufferElement = document.querySelector("#loadingBuffering");
 
         document.getElementById("loginForm").addEventListener("submit", checkLogin);
-
     });
-});
+})();

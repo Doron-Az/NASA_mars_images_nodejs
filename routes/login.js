@@ -4,7 +4,7 @@ var router = express.Router();
 const loginController = require('../Controllers/login');
 const middleWare = require('../Controllers/middleWare');
 
-router.get('/',middleWare.alreadyConnected, loginController.getLogin);
+router.get('/', middleWare.alreadyConnected, loginController.getLogin);
 router.post('/', loginController.postLogin);
 
 module.exports = router;

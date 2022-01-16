@@ -1,39 +1,49 @@
+/**
+ * Input validation module.
+ */
 const validatorModule = (function () {
+    const MSG_EMPTY_INPUT = 'Input is required here';
+    const MSG_ONLY_LATTERS = 'Please enter only alphabetic letters';
+    const MSG_EMAIL_FORMAT = 'Please enter the correct Email format';
+    const MSG_SHORT_PASS = "Please enter at least 8 characters";
+    const MSG_CONFIRM_PASS = "The password confirmation does not match";
+    const MSG_EMAIL_EXIST = "a user with this email adress already exists";
+
     const isNotEmpty = function (str) {
         return {
             isValid: (str.length !== 0),
-            message: 'Please fill out this field'
+            message: MSG_EMPTY_INPUT
         };
     }
 
     const hasLetter = function (str) {
         return {
             isValid: (/^[a-zA-Z]+$/.test(str)),
-            message: 'Please enter only alphabetic letters'
+            message: MSG_ONLY_LATTERS
         }
     }
     const isEmail = function (str) {
         return {
             isValid: (/\S+@\S+\.\S+/.test(str)),
-            message: 'Please enter the correct Email format'
+            message: MSG_EMAIL_FORMAT
         }
     }
     const isBiggerThan = function (str) {
         return {
             isValid: (str.length > 7),
-            message: "Please enter at least 8 characters"
+            message: MSG_SHORT_PASS
         }
     }
     const isEqual = function (strA, strB) {
         return {
             isValid: (strA === strB),
-            message: "The password confirmation does not match"
+            message: MSG_CONFIRM_PASS
         }
     }
     const isExist = function (email) {
         return {
             isValid: false,
-            message: "a user with this email adress already exists"
+            message: MSG_EMAIL_EXIST
         }
     }
     return {
@@ -55,6 +65,11 @@ const validatorModule = (function () {
     let confirmPasswordInputElem = null;
     let loadingBufferingElem = null;
 
+    /**
+     * The function sets cookies for the user
+     * @param {the name of the cookie} cname 
+     * @param {the value of cookie header} cvalue 
+     */
     function setCookie(cname, cvalue) {
         const d = new Date();
         d.setTime(d.getTime() + (60 * 1000));
@@ -62,6 +77,11 @@ const validatorModule = (function () {
         document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
     }
 
+    /**
+     * Check if there is a cookie with that name and if so, return it
+     * @param {cookie name}} cname 
+     * @returns the cookie
+     */
     function getCookie(cname) {
         let name = cname + "=";
         let decodedCookie = decodeURIComponent(document.cookie);
@@ -78,6 +98,10 @@ const validatorModule = (function () {
         return "";
     }
 
+    /**
+     * delete cookie
+     * @param {cookie name} name 
+     */
     function delete_cookie(name) {
         if (getCookie(name)) {
             document.cookie = name + "=" + ";expires=Thu, 01 Jan 1970 00:00:01 GMT";
@@ -85,15 +109,13 @@ const validatorModule = (function () {
     }
 
     /**
-     * Present using the message model you receive.
-     * @param text - the string we want to view on the modal.
+     * The function can have one or two input elements list,
+     * the function validates with a function it has received as a parameter, 
+     * and if there is a validation problem it puts an error message in DIV below the input element.
+     * @param {input elemnt to valid} inputElement 
+     * @param {function to validate with her} validateFunc 
+     * @returns if the validation is ok or not
      */
-    const viewErrorModal = (text) => {
-        let modal = new bootstrap.Modal(document.getElementById("errorModal"));
-        document.getElementById("errorModalText").innerHTML = text;
-        modal.show();
-    }
-
     const validateInput = (inputElement, validateFunc) => {
         let v;
         let errorElement;
@@ -111,6 +133,16 @@ const validatorModule = (function () {
         return v.isValid;
     }
 
+    /**
+     * The function receives the elements of the input in the form,
+     *  and checks if they are validated with a function that is suitable for each type of input.
+     * @param {the first name input element} firstNameInputElem 
+     * @param {the last name input element} lastNameInputElem 
+     * @param {the email input element} emailInputElem 
+     * @param {The extent to which we received back the api asks
+     *  to check if the email is in the database already or not} data 
+     * @returns if the validation ok or not
+     */
     const validateFirstRegisterInput = (firstNameInputElem, lastNameInputElem, emailInputElem, data) => {
         firstNameInputElem.value = firstNameInputElem.value.trim().toLowerCase();
         lastNameInputElem.value = lastNameInputElem.value.trim().toLowerCase();
@@ -129,12 +161,19 @@ const validatorModule = (function () {
         if (data)
             validateInput([emailInputElem], validatorModule.isExist);
 
+        //if all validate - return true, else - return false
         return v1 && v2 && v3 && (!data);
 
     }
 
+    /**
+     * The function receives the elements of the input in the form,
+     *  and checks if they are validated with a function that is suitable for each type of input.
+     * @param {the password element} passwordInputElem 
+     * @param {the confirm password element} confirmPasswordInputElem 
+     * @returns if the validation ok or not
+     */
     const validationPasswordsInput = (passwordInputElem, confirmPasswordInputElem) => {
-
         passwordInputElem.value = passwordInputElem.value.trim();
         confirmPasswordInputElem.value = confirmPasswordInputElem.value.trim();
 
@@ -147,6 +186,11 @@ const validatorModule = (function () {
         return v1 && v2;
     }
 
+    /**
+     * Set a timer on the registration page
+     * @param {how much time the timer set} duration 
+     * @param {what time to show} display 
+     */
     function startTimer(duration, display) {
         var timer = duration,
             minutes, seconds;
@@ -164,7 +208,11 @@ const validatorModule = (function () {
             }
         }, 1000);
     }
-
+    /**
+     * The first part of the listing, check the inputs of first name, last name, email.
+     *  Send an API request to the server to check if such an email exists or not.
+     * If all goes well, set a one-minute clock to complete the registration and proceed to the next step of the registration
+     */
     let registerFirstPart = () => {
 
         loadingBufferingElem.classList.remove('d-none');
@@ -183,6 +231,7 @@ const validatorModule = (function () {
                 startTimer(oneMinutes, display);
 
                 setCookie("registerTimer", "");
+                //change to password part register
                 document.getElementById("registerForm").classList.add('d-none');
                 document.getElementById("passwordDiv").classList.remove('d-none');
 
@@ -190,15 +239,21 @@ const validatorModule = (function () {
             }
             loadingBufferingElem.classList.add('d-none');
 
-        }).catch(function (error) {
+        }).catch(function () {
+            //if somthing wrong with the server ask, we erload again the register page
             loadingBufferingElem.classList.add('d-none');
-            viewErrorModal(error);
-            console.log(error);
+            window.location.href = "/register";
         });
     }
 
-    let registerSecondPart = (event) => {
 
+    /**
+     * Grab the SUBMIT button of the form, perform validation,
+     *  if everything worked validation, activate the SUBMIT of the form and it will register the user.
+     *  If the server failed to register the user, we will get a suitable error window.
+     * @param {the click event of register form} event 
+     */
+    let registerSecondPart = (event) => {
         event.preventDefault();
 
         if (validationPasswordsInput(passwordInputElem, confirmPasswordInputElem)) {

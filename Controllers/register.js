@@ -3,6 +3,10 @@ const dbModels = require("../models"); //contain the User model
 const bcrypt = require("bcrypt");
 const SALT_HASH = 10;
 
+/**
+ * add user to data base
+ * @returns success/error page view
+ */
 exports.addUserToDataBase = (req, res) => {
 
     const { firstNameInput, lastNameInput, emailInput, passwordInput } = req.body;
@@ -37,10 +41,10 @@ exports.addUserToDataBase = (req, res) => {
 }
 
 exports.getRegister = (req, res) => {
-
+    //if user already connected - move to homepage
     if (req.session.isConnected)
         res.redirect('/');
-
+    
     res.render('register', {
         pageTitle: "NASA Sign Up",
         scriptPath: "javaScript/register.js",
