@@ -22,6 +22,7 @@ module.exports.checkAccess = (req, res, next) => {
         next();
 
     } catch (err) {
+        req.session.accessDenied = true;
         res.send({ access: false });
     }
 }
@@ -76,7 +77,7 @@ module.exports.checkTimerCookie = (req, res, next) => {
  */
 module.exports.alreadyConnected = (req, res, next) => {
 
-    if (req.session.isConnected)
+    if (req.session.isConnected && !req.session.accessDenied)
         res.redirect("/");
     else
         next();

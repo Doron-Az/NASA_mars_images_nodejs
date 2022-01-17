@@ -217,6 +217,9 @@ const validatorModule = (function () {
 
         loadingBufferingElem.classList.remove('d-none');
 
+
+
+
         fetch("/api/is-valid-email", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -256,6 +259,7 @@ const validatorModule = (function () {
     let registerSecondPart = (event) => {
         event.preventDefault();
 
+        
         if (validationPasswordsInput(passwordInputElem, confirmPasswordInputElem)) {
             delete_cookie("registerTimer");
 

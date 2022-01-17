@@ -542,7 +542,6 @@ let makerHTML = (() => {
                 "Content-Type": "application/json",
                 "auth-token": localStorage.getItem("auth-token")
             },
-
         }).then(status)
             .then(json)
             .then(function (data) {
@@ -553,8 +552,6 @@ let makerHTML = (() => {
                     setListOfSavedImages(data.image_list);
                 else
                     window.location.href = "/login";
-
-                return data;
 
             }).catch(function (error) {
                 loadingBuffer.classList.add("d-none");

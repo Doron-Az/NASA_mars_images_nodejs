@@ -40,7 +40,7 @@
         let valid = true;
 
         for (let e of elemntsList)
-            if (e.value.trim() === "") {
+            if (e.value === "") {
                 setErrorMsg(e, "Please fill out this field");
                 valid = false;
             } else
@@ -63,13 +63,16 @@
     let checkLogin = (e) => {
         e.preventDefault();
 
+        emailInputElement.value =  emailInputElement.value.trim().toLowerCase();
+        passwordInputElement.value =   passwordInputElement.value.trim();
+
         if (isNotEmpty([emailInputElement, passwordInputElement])) {
             loadingBufferElement.classList.remove("d-none");
             fetch("/api/verify-user", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    "email": emailInputElement.value.trim().toLowerCase(),
+                    "email": emailInputElement.value,
                     "password": passwordInputElement.value
                 })
             }).then(status)
