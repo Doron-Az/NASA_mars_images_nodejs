@@ -44,4 +44,4 @@ This project was built using the following technologies:
 This project was created by [Your Name] and [Partner Name], as part of [Course Name]. We welcome contributions from other developers to improve this project.
 
 ## License
-This project is licensed under the MIT License.
+This project is licensed under the Hadassa College License.
